@@ -5,18 +5,21 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/model/employee_model.dart';
 import '../../../../core/providers/attendance_provider.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class EmployeeProfileScreen extends StatelessWidget {
   const EmployeeProfileScreen({super.key});
+
+  // 🌐 অ্যাপের বেস URL এর সাথে 'eps' সাব-পাথ (প্রয়োজনে পরিবর্তন করুন)
+  static const String _baseUrl = 'https://your-domain.com/eps';
 
   // 🔄 প্রোফাইল ডাটা রিফ্রেশ করার মেথড
   Future<void> _handleRefresh(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('auth_token');
 
-    if (token != null) {
+    if (token != null && context.mounted) {
       final attendance = context.read<AttendanceProvider>();
-      // সার্ভার থেকে নতুন প্রোফাইল ডাটা ফেচ করবে
       await attendance.refreshProfileFromServer(token);
     }
   }
@@ -32,20 +35,30 @@ class EmployeeProfileScreen extends StatelessWidget {
     }
   }
 
+  // 🖼️ URL ফরম্যাটিং
+  String? _getFormattedImageUrl(String? rawUrl) {
+    if (rawUrl == null || rawUrl.isEmpty) return null;
+    if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+      return rawUrl;
+    }
+    final formattedPath = rawUrl.startsWith('/') ? rawUrl : '/$rawUrl';
+    return '$_baseUrl$formattedPath';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
 
-    // 🎯 প্রোভাইডার ওয়াচ করা হচ্ছে যাতে ডাটা চেঞ্জ হলে ইউআই অটো আপডেট হয়
     context.watch<AttendanceProvider>();
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          "আমার প্রোফাইল",
-          style: TextStyle(
+        title: Text(
+          l10n.eps_profile_title,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
             color: Colors.white,
@@ -56,7 +69,6 @@ class EmployeeProfileScreen extends StatelessWidget {
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-
       bottomNavigationBar: SafeArea(
         child: Container(
           height: 65,
@@ -77,7 +89,7 @@ class EmployeeProfileScreen extends StatelessWidget {
             children: [
               BottomNavItem(
                 icon: Icons.home_rounded,
-                label: "হোম",
+                label: l10n.eps_nav_home,
                 color: Colors.grey,
                 isActive: false,
                 onTap: () {
@@ -86,7 +98,7 @@ class EmployeeProfileScreen extends StatelessWidget {
               ),
               BottomNavItem(
                 icon: Icons.history_rounded,
-                label: "হিস্ট্রি",
+                label: l10n.eps_nav_history,
                 color: Colors.grey,
                 isActive: false,
                 onTap: () {
@@ -95,7 +107,7 @@ class EmployeeProfileScreen extends StatelessWidget {
               ),
               BottomNavItem(
                 icon: Icons.person,
-                label: "প্রোফাইল",
+                label: l10n.eps_nav_profile,
                 color: primaryColor,
                 isActive: true,
                 onTap: () {
@@ -117,22 +129,23 @@ class EmployeeProfileScreen extends StatelessWidget {
           final String? profileStr = prefs.getString('user_profile');
           final employee = _getEmployeeFromPrefs(profileStr);
 
-          // 🎯 আপনার নতুন EmployeeModel অনুযায়ী ডেটা ম্যাপিং ও নাল হ্যান্ডলিং
-          String name = employee?.name ?? "পরিচিত কর্মী";
+          // 🎯 লকালাইজেশন সহ ডেটা ম্যাপিং
+          String name = employee?.name ?? l10n.eps_default_name;
           String empId =
-              employee?.employeeId == null || employee!.employeeId!.isEmpty
-              ? "N/A"
+              (employee?.employeeId == null || employee!.employeeId!.isEmpty)
+              ? l10n.eps_not_available
               : employee.employeeId!;
-          String mobile = employee?.mobile ?? "মোবাইল নম্বর পাওয়া যায়নি";
-          String fatherName = employee?.fatherName ?? "তথ্য নেই";
-          String motherName = employee?.motherName ?? "তথ্য নেই";
-          String nid = employee?.nid ?? "তথ্য নেই";
-          String dob = employee?.dob ?? "তথ্য নেই";
+          String mobile = employee?.mobile ?? l10n.eps_mobile_not_found;
+          String fatherName = employee?.fatherName ?? l10n.eps_no_info;
+          String motherName = employee?.motherName ?? l10n.eps_no_info;
+          String nid = employee?.nid ?? l10n.eps_no_info;
+          String dob = employee?.dob ?? l10n.eps_no_info;
           String address =
-              employee?.address == null || employee!.address!.isEmpty
-              ? "ঠিকানা পাওয়া যায়নি"
+              (employee?.address == null || employee!.address!.isEmpty)
+              ? l10n.eps_address_not_found
               : employee.address!;
-          String? imageUrl = employee?.imageUrl;
+
+          String? imageUrl = _getFormattedImageUrl(employee?.imageUrl);
 
           return RefreshIndicator(
             color: primaryColor,
@@ -141,7 +154,7 @@ class EmployeeProfileScreen extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
-                  // 👤 ১. প্রোফাইল হেডার কার্ড (টপ সেকশন)
+                  // 👤 ১. প্রোফাইল হেডার
                   Stack(
                     alignment: Alignment.center,
                     children: [
@@ -200,7 +213,7 @@ class EmployeeProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "আইডি: $empId",
+                    l10n.eps_id_label(empId),
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
@@ -210,7 +223,7 @@ class EmployeeProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // 📋 ৩. নতুন মডেল অনুযায়ী ডিটেইলস ইনফরমেশন লিস্ট
+                  // 📋 ৩. ডিটেইলস ইনফরমেশন লিস্ট
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Card(
@@ -225,43 +238,49 @@ class EmployeeProfileScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             _buildInfoTile(
+                              context: context,
                               icon: Icons.phone_android_outlined,
-                              title: "মোবাইল নম্বর",
+                              title: l10n.eps_label_mobile,
                               value: mobile,
                               iconColor: primaryColor,
                             ),
                             const _CustomDivider(),
                             _buildInfoTile(
+                              context: context,
                               icon: Icons.credit_card_outlined,
-                              title: "এনআইডি (NID)",
+                              title: l10n.eps_label_nid,
                               value: nid,
                               iconColor: primaryColor,
                             ),
                             const _CustomDivider(),
                             _buildInfoTile(
+                              context: context,
                               icon: Icons.cake_outlined,
-                              title: "জন্ম তারিখ",
+                              title: l10n.eps_label_dob,
                               value: dob,
                               iconColor: primaryColor,
                             ),
                             const _CustomDivider(),
                             _buildInfoTile(
+                              context: context,
                               icon: Icons.person_outline_rounded,
-                              title: "পিতার নাম",
+                              title: l10n.eps_label_father_name,
                               value: fatherName,
                               iconColor: primaryColor,
                             ),
                             const _CustomDivider(),
                             _buildInfoTile(
+                              context: context,
                               icon: Icons.person_outline_rounded,
-                              title: "মাতার নাম",
+                              title: l10n.eps_label_mother_name,
                               value: motherName,
                               iconColor: primaryColor,
                             ),
                             const _CustomDivider(),
                             _buildInfoTile(
+                              context: context,
                               icon: Icons.location_on_outlined,
-                              title: "বর্তমান ঠিকানা",
+                              title: l10n.eps_label_address,
                               value: address,
                               iconColor: primaryColor,
                             ),
@@ -270,8 +289,6 @@ class EmployeeProfileScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 20),
 
                   const SizedBox(height: 20),
                 ],
@@ -283,18 +300,20 @@ class EmployeeProfileScreen extends StatelessWidget {
     );
   }
 
-  // 🛠️ প্রতিটি তথ্যের রো (Row) তৈরি করার হেল্পার উইজেট
+  // 🛠️ ইনফরমেশন রো
   Widget _buildInfoTile({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String value,
     required Color iconColor,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment
-            .start, // লম্বা ঠিকানার জন্য টপ অ্যালাইন করা হয়েছে
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(10),
@@ -319,7 +338,7 @@ class EmployeeProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  value.isEmpty ? "তথ্য নেই" : value,
+                  value.isEmpty ? l10n.eps_no_info : value,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -335,7 +354,7 @@ class EmployeeProfileScreen extends StatelessWidget {
   }
 }
 
-// 📏 কাস্টম লাইট ডিভাইডার
+// 📏 কাস্টম ডিভাইডার
 class _CustomDivider extends StatelessWidget {
   const _CustomDivider();
 

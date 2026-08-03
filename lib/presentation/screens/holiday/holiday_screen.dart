@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import '../../../core/providers/holiday_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class HolidayUploadCalendarScreen extends StatelessWidget {
   HolidayUploadCalendarScreen({super.key});
@@ -25,6 +26,7 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
     DateTime end,
     HolidayProvider provider,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     _holidayTitleController.clear();
 
     // ১ দিন নাকি একাধিক দিন তা চেক করা
@@ -34,8 +36,11 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
         start.day == end.day;
 
     final dateSelectionText = isSingleDay
-        ? 'তারিখ: ${DateFormat('dd MMMM, yyyy').format(start)}'
-        : 'মেয়াদ: ${DateFormat('dd MMMM').format(start)} থেকে ${DateFormat('dd MMMM, yyyy').format(end)}';
+        ? l10n.singleDateText(DateFormat('dd MMMM, yyyy').format(start))
+        : l10n.dateRangeText(
+            DateFormat('dd MMMM').format(start),
+            DateFormat('dd MMMM, yyyy').format(end),
+          );
 
     showDialog(
       context: context,
@@ -52,7 +57,9 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              isSingleDay ? '১ দিনের ছুটি যোগ করুন' : 'টানা ছুটি যোগ করুন',
+              isSingleDay
+                  ? l10n.addSingleDayHolidayTitle
+                  : l10n.addMultiDayHolidayTitle,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
@@ -73,8 +80,8 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
             TextField(
               controller: _holidayTitleController,
               decoration: InputDecoration(
-                hintText: 'উদা: ঈদের ছুটি, স্বাধীনতা দিবস',
-                labelText: 'ছুটি বা উৎসবের নাম',
+                hintText: l10n.holidayTitleHint,
+                labelText: l10n.holidayTitleLabel,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -89,7 +96,10 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
               _rangeEndNotifier.value = null;
               Navigator.pop(context);
             },
-            child: const Text('বাতিল', style: TextStyle(color: Colors.grey)),
+            child: Text(
+              l10n.cancel,
+              style: const TextStyle(color: Colors.grey),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -115,7 +125,7 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
                 if (success && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('"$title" সফলভাবে যুক্ত হয়েছে! 🎉'),
+                      content: Text(l10n.holidayAddedSuccessfully(title)),
                       backgroundColor: Colors.green,
                     ),
                   );
@@ -125,7 +135,7 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
                 _rangeEndNotifier.value = null;
               }
             },
-            child: const Text('সংরক্ষণ করুন'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -134,6 +144,7 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final primaryColor = theme.primaryColor;
     final holidayProvider = Provider.of<HolidayProvider>(context);
@@ -141,9 +152,9 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'ছুটির দিন আপলোড স্ক্রিন',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        title: Text(
+          l10n.holidayUploadCalendarTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         elevation: 0,
         backgroundColor: primaryColor,
@@ -166,20 +177,20 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         color: primaryColor.withOpacity(0.06),
-                        child: const Column(
+                        child: Column(
                           children: [
                             Text(
-                              '👉 ১ দিনের ছুটি: যেকোনো একটি তারিখ সিলেক্ট করে নিচের বাটনে চাপুন।',
-                              style: TextStyle(
+                              l10n.singleDayGuidance,
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.black87,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
-                              '👉 একাধিক দিনের ছুটি: প্রথম ও শেষ তারিখ সিলেক্ট করে নিচের বাটনে চাপুন।',
-                              style: TextStyle(
+                              l10n.multiDayGuidance,
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.black87,
                                 fontWeight: FontWeight.w500,
@@ -277,7 +288,7 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
                               },
                             ),
 
-                            // 👆 সিলেকশন লজিক (শুধুমাত্র সিলেক্ট করে রাখবে, পপ-আপ অটোমেটিক আসবে না)
+                            // 👆 সিলেকশন লজিক
                             onRangeSelected: (start, end, focusedDayTarget) {
                               _focusedDayNotifier.value = focusedDayTarget;
                               _rangeStartNotifier.value = start;
@@ -296,11 +307,10 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
               ),
             ),
 
-      // 🚀 আকর্ষনীয় Floating Action Button (নিচে যুক্ত করা হয়েছে)
+      // 🚀 Floating Action Button
       bottomNavigationBar: AnimatedBuilder(
         animation: Listenable.merge([_rangeStartNotifier, _rangeEndNotifier]),
         builder: (context, child) {
-          // যখন কোনো দিন সিলেক্ট করা থাকবে তখনই শুধু বাটনটি সক্রিয় বা দৃশ্যমান হবে
           final hasSelection = _rangeStartNotifier.value != null;
 
           return Padding(
@@ -329,7 +339,6 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
                 onPressed: hasSelection
                     ? () {
                         final start = _rangeStartNotifier.value!;
-                        // যদি এন্ড ডেট নাল থাকে তার মানে ১ দিনের ছুটি সিলেক্ট করেছে (start-ই এন্ড ডেট)
                         final end = _rangeEndNotifier.value ?? start;
 
                         _showAddHolidayDialog(
@@ -339,12 +348,12 @@ class HolidayUploadCalendarScreen extends StatelessWidget {
                           holidayProvider,
                         );
                       }
-                    : null, // সিলেক্ট না থাকলে বাটন ডিজেবল থাকবে
+                    : null,
                 icon: const Icon(Icons.add_circle_outline_rounded),
                 label: Text(
                   _rangeEndNotifier.value == null
-                      ? 'ছুটি যোগ করুন'
-                      : 'টানা ছুটি যোগ করুন',
+                      ? l10n.addHoliday
+                      : l10n.addConsecutiveHoliday,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,

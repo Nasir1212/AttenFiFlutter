@@ -4,6 +4,7 @@ import 'package:atten_fi/core/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../l10n/app_localizations.dart';
 
 import '../../widgets/custom_ad_bottom_bar.dart';
 
@@ -12,11 +13,13 @@ class EmployeeDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🌟 ১. আগের স্ক্রিন থেকে পাঠানো কর্মচারীর অবজেক্টটি আর্গুমেন্ট হিসেবে রিসিভ করা
+    final l10n = AppLocalizations.of(context)!;
+
+    // ১. আগের স্ক্রিন থেকে পাঠানো কর্মচারীর অবজেক্টটি আর্গুমেন্ট হিসেবে রিসিভ করা
     final employee =
         ModalRoute.of(context)!.settings.arguments as EmployeeModel;
 
-    // ছবি লোড করার হেডার পাসের জন্য টোকেনটি নিয়ে রাখা
+    // ছবি লোড করার হেডার পাসের জন্য টোকেনটি নিয়ে রাখা
     final String userToken = context.read<AuthProvider>().token ?? '';
 
     return Scaffold(
@@ -24,9 +27,9 @@ class EmployeeDetails extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
-        title: const Text(
-          "কর্মচারীর তথ্য",
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          l10n.employeeDetailsTitle,
+          style: const TextStyle(color: Colors.white),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -49,7 +52,7 @@ class EmployeeDetails extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 30),
               child: Column(
                 children: [
-                  // 🌟 ডাইনামিক প্রোফাইল ইমেজ (Cached Network Image সহ)
+                  // ডাইনামিক প্রোফাইল ইমেজ (Cached Network Image সহ)
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.white,
@@ -76,7 +79,7 @@ class EmployeeDetails extends StatelessWidget {
                   ),
                   const SizedBox(height: 15),
 
-                  // 🌟 ডাইনামিক নাম
+                  // ডাইনামিক নাম
                   Text(
                     employee.name,
                     style: const TextStyle(
@@ -87,9 +90,9 @@ class EmployeeDetails extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
 
-                  // পদবি (যদি মডেলে ডেটা থাকে তবে সেটি দেবেন, নয়তো ডিফল্ট রোল)
+                  // পদবি
                   Text(
-                    "কর্মচারী",
+                    l10n.employeeRole,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.8),
                       fontSize: 14,
@@ -107,66 +110,66 @@ class EmployeeDetails extends StatelessWidget {
               child: Column(
                 children: [
                   // প্রাতিষ্ঠানিক তথ্য
-                  _buildInfoCard(context, "প্রাতিষ্ঠানিক তথ্য", [
+                  _buildInfoCard(context, l10n.institutionalInfo, [
                     _buildInfoRow(
                       Icons.badge_outlined,
-                      "এমপ্লয়ে আইডি",
+                      l10n.employeeId,
                       employee.employeeId != null &&
                               employee.employeeId!.isNotEmpty
                           ? employee.employeeId!
-                          : 'আইডি পাওয়া যায়নি',
+                          : l10n.idNotFound,
                     ),
                   ]),
                   const SizedBox(height: 15),
 
                   // ব্যক্তিগত তথ্য
-                  _buildInfoCard(context, "ব্যক্তিগত তথ্য", [
+                  _buildInfoCard(context, l10n.personalInfo, [
                     _buildInfoRow(
                       Icons.person_outline,
-                      "পিতার নাম",
+                      l10n.fatherName,
                       employee.fatherName != null &&
                               employee.fatherName!.isNotEmpty
                           ? employee.fatherName!
-                          : "উল্লেখ নেই",
+                          : l10n.notSpecified,
                     ),
                     _buildInfoRow(
                       Icons.person_outline,
-                      "মাতার নাম",
+                      l10n.motherName,
                       employee.motherName != null &&
                               employee.motherName!.isNotEmpty
                           ? employee.motherName!
-                          : "উল্লেখ নেই",
+                          : l10n.notSpecified,
                     ),
                     _buildInfoRow(
                       Icons.calendar_month,
-                      "জন্ম তারিখ",
+                      l10n.dateOfBirth,
                       employee.dob != null && employee.dob!.isNotEmpty
                           ? employee.dob!
-                          : "উল্লেখ নেই",
+                          : l10n.notSpecified,
                     ),
                     _buildInfoRow(
                       Icons.credit_card,
-                      "এন.আই.ডি (NID)",
+                      l10n.nidNumber,
                       employee.nid != null && employee.nid!.isNotEmpty
                           ? employee.nid!
-                          : "উল্লেখ নেই",
+                          : l10n.notSpecified,
                     ),
                   ]),
                   const SizedBox(height: 15),
 
                   // যোগাযোগের তথ্য
-                  _buildInfoCard(context, "যোগাযোগের তথ্য", [
+                  _buildInfoCard(context, l10n.contactInfo, [
                     _buildInfoRow(
                       Icons.phone_android,
-                      "মোবাইল",
+                      l10n.mobileNumber,
                       employee.mobile,
                     ),
                     _buildInfoRow(
                       Icons.home_outlined,
-                      "ঠিকানা",
+                      l10n.fullAddress,
                       employee.address != null && employee.address!.isNotEmpty
                           ? employee.address!
-                          : "উল্লেখ নেই",
+                          : l10n.notSpecified,
                     ),
                   ]),
                   const SizedBox(height: 30),
@@ -177,7 +180,6 @@ class EmployeeDetails extends StatelessWidget {
                     height: 50,
                     child: OutlinedButton.icon(
                       onPressed: () {
-                        // এডিট করার পেইজে অবজেক্টটি পাস করতে চাইলে:
                         Navigator.pushNamed(
                           context,
                           '/edit-employee',
@@ -185,9 +187,9 @@ class EmployeeDetails extends StatelessWidget {
                         );
                       },
                       icon: const Icon(Icons.edit, color: AppColors.primary),
-                      label: const Text(
-                        "তথ্য পরিবর্তন করুন", // তথ্য পরিবর্তন করুন
-                        style: TextStyle(color: AppColors.primary),
+                      label: Text(
+                        l10n.editInformation,
+                        style: const TextStyle(color: AppColors.primary),
                       ),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: AppColors.primary),

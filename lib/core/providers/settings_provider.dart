@@ -84,9 +84,7 @@ class SettingsProvider extends ChangeNotifier {
       final response = await ApiService.get('/get-settings', token: token);
 
       if (response.statusCode == 200) {
-        final decodedBody = response.body is String
-            ? json.decode(response.body)
-            : response.body;
+        final decodedBody = json.decode(response.body);
 
         if (decodedBody != null && decodedBody['data'] != null) {
           final data = decodedBody['data'];

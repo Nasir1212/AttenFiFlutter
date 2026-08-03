@@ -3,6 +3,7 @@ import 'package:atten_fi/core/providers/attendance_provider.dart';
 import 'package:atten_fi/core/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/custom_ad_bottom_bar.dart';
 
 class AdminDashboard extends StatelessWidget {
@@ -10,6 +11,7 @@ class AdminDashboard extends StatelessWidget {
 
   void _handleLogout(BuildContext context) async {
     final String? token = context.read<AuthProvider>().token;
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -18,14 +20,12 @@ class AdminDashboard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          title: const Text('লগআউট নিশ্চিত করুন'),
-          content: const Text(
-            'আপনি কি নিশ্চিতভাবেই অ্যাকাউন্ট থেকে লগআউট করতে চান?',
-          ),
+          title: Text(l10n.logoutConfirmTitle),
+          content: Text(l10n.logoutConfirmMessage),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('না', style: TextStyle(color: Colors.grey)),
+              child: Text(l10n.no, style: const TextStyle(color: Colors.grey)),
             ),
             TextButton(
               onPressed: () async {
@@ -34,7 +34,7 @@ class AdminDashboard extends StatelessWidget {
                 try {
                   context.read<AuthProvider>().logout(token!);
                 } catch (e) {
-                  print("লগআউট এপিআই-তে সমস্যা: $e");
+                  debugPrint("লগআউট এপিআই-তে সমস্যা: $e");
                 }
 
                 if (context.mounted) {
@@ -45,9 +45,9 @@ class AdminDashboard extends StatelessWidget {
                   );
                 }
               },
-              child: const Text(
-                'হ্যাঁ',
-                style: TextStyle(
+              child: Text(
+                l10n.yes,
+                style: const TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),
@@ -61,7 +61,9 @@ class AdminDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // স্ক্রিন ওপেন হওয়ামাত্র টোকেন রিড করে সার্ভার থেকে ডাইনামিক ডাটা পুল করবে
+    final l10n = AppLocalizations.of(context)!;
+
+    // স্ক্রিন ওপেন হওয়ামাত্র টোকেন রিড করে সার্ভার থেকে ডাইনামিক ডাটা পুল করবে
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AttendanceProvider>().fetchAdminDashboardData();
     });
@@ -71,20 +73,20 @@ class AdminDashboard extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "AttenFI",
-              style: TextStyle(
+              l10n.appName,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              "অ্যাডমিন/ম্যানেজার",
-              style: TextStyle(color: Colors.white70, fontSize: 12),
+              l10n.adminManager,
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
             ),
           ],
         ),
@@ -100,7 +102,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(width: 5),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
-            tooltip: 'Log Out',
+            tooltip: l10n.logOutTooltip,
             onPressed: () => _handleLogout(context),
           ),
           const SizedBox(width: 10),
@@ -123,13 +125,16 @@ class AdminDashboard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "আজকের পরিসংখ্যান",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.todayStats,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 15),
 
-                  // Statistics Grid (ডাইনামিক ডাটা অ্যাসাইন করা হয়েছে)
+                  // Statistics Grid
                   GridView.count(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -139,25 +144,25 @@ class AdminDashboard extends StatelessWidget {
                     childAspectRatio: 1.5,
                     children: [
                       _buildStatCard(
-                        "মোট কর্মচারী",
+                        l10n.totalEmployee,
                         provider.adminStats["total"] ?? "0",
                         Icons.groups,
                         Colors.blue,
                       ),
                       _buildStatCard(
-                        "উপস্থিত",
+                        l10n.present,
                         provider.adminStats["present"] ?? "0",
                         Icons.check_circle,
                         Colors.green,
                       ),
                       _buildStatCard(
-                        "অনুপস্থিত",
+                        l10n.absent,
                         provider.adminStats["absent"] ?? "0",
                         Icons.cancel,
                         Colors.red,
                       ),
                       _buildStatCard(
-                        "দেরি (Late)",
+                        l10n.late,
                         provider.adminStats["late"] ?? "0",
                         Icons.access_time,
                         Colors.orange,
@@ -166,41 +171,47 @@ class AdminDashboard extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 25),
-                  const Text(
-                    "কুইক অ্যাকশন",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.quickActions,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 15),
 
-                  // Action Buttons (আপনার অরিজিনাল মেনু স্ট্রাকচার)
+                  // Action Buttons
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildActionButton(Icons.person, " স্টাফ", () {
+                        _buildActionButton(Icons.person, l10n.staff, () {
                           Navigator.pushNamed(context, '/employee-list-table');
                         }),
-                        _buildActionButton(Icons.router, "রাউটার", () {
+                        _buildActionButton(Icons.router, l10n.router, () {
                           Navigator.pushNamed(context, '/wifi-list');
                         }),
-                        _buildActionButton(Icons.bar_chart, "রিপোর্ট", () {
+                        _buildActionButton(Icons.bar_chart, l10n.report, () {
                           Navigator.pushNamed(
                             context,
                             '/employee-report-table',
                           );
                         }),
-                        _buildActionButton(Icons.table_chart, "অফিস", () {
+                        _buildActionButton(Icons.table_chart, l10n.office, () {
                           Navigator.pushNamed(context, '/office-list');
                         }),
-                        _buildActionButton(Icons.holiday_village, "ছুটি", () {
-                          Navigator.pushNamed(context, '/holiday');
-                        }),
-
-                        _buildActionButton(Icons.code, "ওটিপি", () {
+                        _buildActionButton(
+                          Icons.holiday_village,
+                          l10n.holiday,
+                          () {
+                            Navigator.pushNamed(context, '/holiday');
+                          },
+                        ),
+                        _buildActionButton(Icons.code, l10n.otp, () {
                           Navigator.pushNamed(context, '/admin-otp');
                         }),
-                        _buildActionButton(Icons.settings, "সেটিংস", () {
+                        _buildActionButton(Icons.settings, l10n.settings, () {
                           Navigator.pushNamed(context, '/settings');
                         }),
                       ],
@@ -209,36 +220,36 @@ class AdminDashboard extends StatelessWidget {
 
                   const SizedBox(height: 30),
 
-                  // Recent Attendance List
+                  // Recent Attendance List Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        "সাম্প্রতিক উপস্থিতি",
-                        style: TextStyle(
+                      Text(
+                        l10n.recentAttendance,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       TextButton(
                         onPressed: () {},
-                        child: const Text(
-                          "সব দেখুন",
-                          style: TextStyle(color: AppColors.primary),
+                        child: Text(
+                          l10n.seeAll,
+                          style: const TextStyle(color: AppColors.primary),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
 
-                  // ডাইনামিক সাম্প্রতিক হাজিরার তালিকা জেনারেটর
+                  // Recent Attendance List Dynamic Generator
                   provider.recentAttendanceList.isEmpty
-                      ? const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.0),
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
                           child: Center(
                             child: Text(
-                              "আজকে এখনও কোনো হাজিরার লগ নেই।",
-                              style: TextStyle(color: Colors.grey),
+                              l10n.noAttendanceLogs,
+                              style: const TextStyle(color: Colors.grey),
                             ),
                           ),
                         )
@@ -249,7 +260,6 @@ class AdminDashboard extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final log = provider.recentAttendanceList[index];
 
-                            // স্ট্যাটাস টাইপ অনুযায়ী ডাইনামিক কালার সিলেকশন
                             Color statusColor = Colors.green;
                             if (log['status_type'] == 'Late') {
                               statusColor = Colors.orange;
@@ -258,9 +268,10 @@ class AdminDashboard extends StatelessWidget {
                             }
 
                             return _buildRecentAttendance(
-                              log['name'] ?? "অজানা",
+                              context,
+                              log['name'] ?? l10n.unknown,
                               log['time'] ?? "--:-- AM",
-                              log['status'] ?? "সময়মতো",
+                              log['status'] ?? l10n.onTime,
                               statusColor,
                             );
                           },
@@ -275,13 +286,15 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  // সাম্প্রতিক উপস্থিতি লিস্ট আইটেম (আপনার অরিজিনাল ডিজাইন উইজেট)
   Widget _buildRecentAttendance(
+    BuildContext context,
     String name,
     String time,
     String status,
     Color statusColor,
   ) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
@@ -311,7 +324,7 @@ class AdminDashboard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "সময়: $time",
+                  l10n.timeFormat(time),
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ],
@@ -337,7 +350,6 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  // স্ট্যাট কার্ড (আপনার অরিজিনাল ডিজাইন উইজেট)
   Widget _buildStatCard(
     String title,
     String count,
@@ -374,7 +386,6 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  // কুইক অ্যাকশন বাটন (আপনার অরিজিনাল ডিজাইন উইজেট)
   Widget _buildActionButton(IconData icon, String label, VoidCallback onTap) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),

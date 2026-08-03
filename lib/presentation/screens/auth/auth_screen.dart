@@ -3,19 +3,22 @@ import 'package:atten_fi/presentation/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/custom_snackbar.dart';
 import '../../widgets/link_button.dart';
 
 class AuthScreen extends StatelessWidget {
   AuthScreen({super.key});
 
-  // টেক্সট কন্ট্রোলার (ডাটা ইনপুট নেওয়ার জন্য)
+  // টেক্সট কন্ট্রোলার (ডাটা ইনপুট নেওয়ার জন্য)
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -28,7 +31,7 @@ class AuthScreen extends StatelessWidget {
                 Image.asset('assets/images/logo.png', height: 100, width: 100),
                 const SizedBox(height: 8),
                 Text(
-                  "অ্যাডমিন প্যানেলে লগইন করুন",
+                  l10n.adminLoginSubtitle,
                   style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 60),
@@ -36,18 +39,18 @@ class AuthScreen extends StatelessWidget {
                 // ইমেইল ইনপুট ফিল্ড
                 InputField(
                   controller: _emailController,
-                  hint: "ইমেইল অ্যাড্রেস",
+                  hint: l10n.emailHint,
                   icon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
-                  label: 'ইমেইল',
+                  label: l10n.emailLabel,
                 ),
                 const SizedBox(height: 20),
 
-                // পাসওয়ার্ড ইনপুট ফিল্ড
+                // পাসওয়ার্ড ইনপুট ফিল্ড
                 InputField(
                   controller: _passwordController,
-                  hint: "পাসওয়ার্ড দিন",
-                  label: "পাসওয়ার্ড",
+                  hint: l10n.passwordHint,
+                  label: l10n.passwordLabel,
                   icon: Icons.lock_outline,
                   isPassword: true,
                 ),
@@ -59,7 +62,7 @@ class AuthScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 55,
                   child: PrimaryButton(
-                    label: "লগইন",
+                    label: l10n.loginButton,
                     icon: Icons.login,
                     isLoading: authProvider.isLoading, // লোডিং স্টেট হ্যান্ডেল
                     onPressed: () => _handleLogin(context, authProvider),
@@ -70,9 +73,9 @@ class AuthScreen extends StatelessWidget {
 
                 // একাউন্ট তৈরি করার বাটন/লিঙ্ক
                 LinkButton(
-                  text: " আপনার কি একাউন্ট নাই ? ",
-                  actionText: "একাউন্ট তৈরী করুন",
-                  alignment: MainAxisAlignment.center, // ডান পাশে দেখাবে
+                  text: l10n.noAccountText,
+                  actionText: l10n.createAccountText,
+                  alignment: MainAxisAlignment.center,
                   onTap: () {
                     Navigator.pushNamed(context, '/sign-up');
                   },
@@ -87,6 +90,7 @@ class AuthScreen extends StatelessWidget {
 
   // লগইন হ্যান্ডলার এবং ভ্যালিডেশন
   void _handleLogin(BuildContext context, AuthProvider authProvider) async {
+    final l10n = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
@@ -94,7 +98,7 @@ class AuthScreen extends StatelessWidget {
     if (email.isEmpty || password.isEmpty) {
       CustomSnackBar.show(
         context,
-        message: "ইমেইল এবং পাসওয়ার্ড দুটিই পূরণ করুন",
+        message: l10n.fillEmailAndPasswordValidation,
         isSuccess: false,
         icon: Icons.warning_amber_rounded,
       );
@@ -107,7 +111,7 @@ class AuthScreen extends StatelessWidget {
       password: password,
     );
 
-    // ৩. রেসপন্স অনুযায়ী রাউটিং ও ইউআই
+    // ৩. রেসপন্স অনুযায়ী রাউটিং ও ইউআই
     if (context.mounted) {
       if (result['success'] == true) {
         CustomSnackBar.show(
@@ -116,7 +120,7 @@ class AuthScreen extends StatelessWidget {
           isSuccess: true,
           icon: Icons.check_circle_outline,
         );
-        // লগইন সফল হলে ড্যাশবোর্ডে নিয়ে যাওয়া এবং ব্যাক স্ট্যাক ক্লিয়ার করা
+        // লগইন সফল হলে ড্যাশবোর্ডে নিয়ে যাওয়া এবং ব্যাক স্ট্যাক ক্লিয়ার করা
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/dashboard',

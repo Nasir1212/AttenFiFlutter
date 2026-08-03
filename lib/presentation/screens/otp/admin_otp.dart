@@ -6,7 +6,7 @@ import '../../../core/model/otp_model.dart';
 import '../../../core/providers/admin_otp_provider.dart'; // সঠিক পাথ দিন
 
 class AdminOtpDashboard extends StatelessWidget {
-  const AdminOtpDashboard({Key? key}) : super(key: key);
+  const AdminOtpDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {

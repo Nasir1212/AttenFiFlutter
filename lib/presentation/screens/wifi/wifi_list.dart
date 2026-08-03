@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:atten_fi/core/providers/office_provider.dart';
 import 'package:atten_fi/core/providers/auth_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/custom_ad_bottom_bar.dart';
 import '../../widgets/custom_snackbar.dart';
 
@@ -17,27 +18,32 @@ class WifiListScreen extends StatelessWidget {
   }
 
   void _showDeleteConfirmation(BuildContext context, dynamic wifi) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
           title: Row(
-            children: const [
-              Icon(Icons.warning_amber_rounded, color: Colors.red),
-              SizedBox(width: 10),
-              Text("নিশ্চিতকরণ", style: TextStyle(fontWeight: FontWeight.bold)),
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.red),
+              const SizedBox(width: 10),
+              Text(
+                l10n.deleteConfirmationTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
-          content: Text("'${wifi.ssid}' রাউটারটি ডিলিট করতে চাচ্ছেন?"),
+          content: Text(l10n.deleteRouterConfirmMessage(wifi.ssid.toString())),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                "না, থাক",
-                style: TextStyle(color: Colors.grey),
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(
+                l10n.cancelButton,
+                style: const TextStyle(color: Colors.grey),
               ),
             ),
             ElevatedButton(
@@ -45,7 +51,7 @@ class WifiListScreen extends StatelessWidget {
                 final token = context.read<AuthProvider>().token;
                 if (token == null) return;
 
-                Navigator.pop(context); // পপআপ বন্ধ
+                Navigator.pop(dialogContext); // পপআপ বন্ধ
 
                 final success = await context.read<OfficeProvider>().deleteWifi(
                   token: token,
@@ -55,14 +61,14 @@ class WifiListScreen extends StatelessWidget {
                 if (success && context.mounted) {
                   CustomSnackBar.show(
                     context,
-                    message: "অফিসটি সফলভাবে মুছে ফেলা হয়েছে",
+                    message: l10n.officeDeletedSuccess,
                     isSuccess: true,
                     icon: Icons.delete_sweep,
                   );
                 } else if (context.mounted) {
                   CustomSnackBar.show(
                     context,
-                    message: "মুছে ফেলতে সমস্যা হয়েছে",
+                    message: l10n.deleteFailed,
                     isSuccess: false,
                   );
                 }
@@ -74,7 +80,7 @@ class WifiListScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text("হ্যাঁ, ডিলিট করুন"),
+              child: Text(l10n.deleteButton),
             ),
           ],
         );
@@ -85,6 +91,7 @@ class WifiListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const Color primaryColor = Color(0xFF1A237E);
+    final l10n = AppLocalizations.of(context)!;
 
     final int? officeId = ModalRoute.of(context)?.settings.arguments as int?;
 
@@ -97,7 +104,7 @@ class WifiListScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: primaryColor,
         title: Text(
-          "রাউটারের তালিকা",
+          l10n.routerListTitle,
           style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -106,12 +113,7 @@ class WifiListScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add_box),
             onPressed: () {
-              Navigator.pushNamed(
-                context,
-                '/wifi-setup',
-                arguments:
-                    officeId, // অফিস আইডি (থাকলে পাস হবে, না থাকলে null যাবে)
-              );
+              Navigator.pushNamed(context, '/wifi-setup', arguments: officeId);
             },
           ),
         ],
@@ -125,8 +127,9 @@ class WifiListScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            List<dynamic> displayWifiList = [];
-            displayWifiList = provider.globalWifiList;
+            List<dynamic> displayWifiList = provider.globalWifiList;
+
+            // ২. খালি লিস্টের মেসেজ
             if (displayWifiList.isEmpty) {
               return Center(
                 child: Column(
@@ -139,7 +142,7 @@ class WifiListScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      "রাউটার সেটআপ করা নেই!",
+                      l10n.noRouterSetupText,
                       style: const TextStyle(color: Colors.grey, fontSize: 14),
                     ),
                     const SizedBox(height: 15),
@@ -155,9 +158,9 @@ class WifiListScreen extends StatelessWidget {
                         backgroundColor: primaryColor,
                       ),
                       icon: const Icon(Icons.add, color: Colors.white),
-                      label: const Text(
-                        "এখনই সেটআপ করুন",
-                        style: TextStyle(color: Colors.white),
+                      label: Text(
+                        l10n.setupNowButton,
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ],
@@ -165,7 +168,7 @@ class WifiListScreen extends StatelessWidget {
               );
             }
 
-            // ৩. ওয়াইফাই লিস্ট ভিউ
+            // ৩. ওয়াইফাই লিস্ট ভিউ
             return ListView.builder(
               padding: const EdgeInsets.all(15),
               itemCount: displayWifiList.length,
@@ -184,7 +187,7 @@ class WifiListScreen extends StatelessWidget {
                       child: Icon(Icons.router_rounded, color: primaryColor),
                     ),
                     title: Text(
-                      wifi.ssid, // ওয়াইফাই নাম
+                      wifi.ssid.toString(),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -193,7 +196,7 @@ class WifiListScreen extends StatelessWidget {
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(
-                        "BSSID: ${wifi.bssid}", // রাউটার ম্যাক এড্রেস
+                        l10n.bssidLabel(wifi.bssid.toString()),
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
@@ -212,7 +215,7 @@ class WifiListScreen extends StatelessWidget {
           },
         ),
       ),
-      bottomNavigationBar: CustomAdBottomBar(),
+      bottomNavigationBar: const CustomAdBottomBar(),
     );
   }
 }

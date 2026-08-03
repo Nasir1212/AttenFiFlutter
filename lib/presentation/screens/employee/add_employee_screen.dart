@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/custom_ad_bottom_bar.dart';
 import '../../widgets/custom_snackbar.dart';
 
@@ -58,7 +59,6 @@ class AddEmployeeScreen extends StatelessWidget {
     );
 
     if (pickedDate != null) {
-      // 🌟 সিলেক্ট করা ডেটটিকে DD/MM/YYYY ফরম্যাটে কনভার্ট করে টেক্সট কন্ট্রোলারে বসানো
       String formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
       _dobController.text = formattedDate;
     }
@@ -67,15 +67,16 @@ class AddEmployeeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final employeeProvider = context.watch<EmployeeProvider>();
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
-        title: const Text(
-          "নতুন কর্মচারী যোগ করুন",
-          style: TextStyle(color: Colors.white, fontSize: 18),
+        title: Text(
+          l10n.addEmployeeTitle,
+          style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -144,25 +145,25 @@ class AddEmployeeScreen extends StatelessWidget {
 
             // ইনপুট ফিল্ডসমূহ
             InputField(
-              label: "কর্মচারীর নাম",
+              label: l10n.employeeName,
               controller: _nameController,
               icon: Icons.person_outline,
             ),
             const SizedBox(height: 15),
             InputField(
-              label: "পিতার নাম",
+              label: l10n.fatherName,
               controller: _fatherNameController,
               icon: Icons.person_search,
             ),
             const SizedBox(height: 15),
             InputField(
-              label: "মাতার নাম",
+              label: l10n.motherName,
               controller: _motherNameController,
               icon: Icons.person_search,
             ),
             const SizedBox(height: 15),
             InputField(
-              label: "এনআইডি (NID) নম্বর",
+              label: l10n.nidNumber,
               controller: _nidController,
               icon: Icons.credit_card,
               keyboardType: TextInputType.number,
@@ -173,24 +174,24 @@ class AddEmployeeScreen extends StatelessWidget {
               onTap: () => _selectDate(context),
               child: AbsorbPointer(
                 child: InputField(
-                  label: "জন্ম তারিখ",
+                  label: l10n.dateOfBirth,
                   controller: _dobController,
                   icon: Icons.calendar_today,
-                  hint: "DD/MM/YYYY",
+                  hint: l10n.dobHint,
                 ),
               ),
             ),
             const SizedBox(height: 15),
 
             InputField(
-              label: "মোবাইল নম্বর",
+              label: l10n.mobileNumber,
               controller: _mobileController,
               icon: Icons.phone_android,
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 15),
             InputField(
-              label: "সম্পূর্ন ঠিকানা",
+              label: l10n.fullAddress,
               controller: _addressController,
               icon: Icons.home,
             ),
@@ -201,7 +202,7 @@ class AddEmployeeScreen extends StatelessWidget {
               width: double.infinity,
               height: 55,
               child: PrimaryButton(
-                label: "তথ্য সংরক্ষণ করুন",
+                label: l10n.saveInformation,
                 icon: Icons.save,
                 isLoading: employeeProvider.isLoading,
                 onPressed: () => _handleSave(context, employeeProvider),
@@ -216,12 +217,14 @@ class AddEmployeeScreen extends StatelessWidget {
   }
 
   void _handleSave(BuildContext context, EmployeeProvider provider) async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_nameController.text.trim().isEmpty ||
         _mobileController.text.trim().isEmpty ||
         _addressController.text.trim().isEmpty) {
       CustomSnackBar.show(
         context,
-        message: "* নাম, মোবাইল এবং ঠিকানা অবশ্যই পূরণ করুন",
+        message: l10n.validationRequiredFields,
         isSuccess: false,
         icon: Icons.error_outline,
       );
@@ -232,7 +235,7 @@ class AddEmployeeScreen extends StatelessWidget {
     if (userToken == null) {
       CustomSnackBar.show(
         context,
-        message: "সেশন শেষ হয়ে গেছে! অনুগ্রহ করে আবার লগইন করুন।",
+        message: l10n.sessionExpiredMessage,
         isSuccess: false,
         icon: Icons.lock_outline,
       );
@@ -259,20 +262,12 @@ class AddEmployeeScreen extends StatelessWidget {
       if (result['success'] == true) {
         CustomSnackBar.show(
           context,
-          message: result['message'] ?? "কর্মচারী সফলভাবে যোগ করা হয়েছে",
+          message: result['message'] ?? l10n.employeeAddedSuccess,
           isSuccess: true,
           icon: Icons.check_circle_outline,
         );
         Navigator.pushReplacementNamed(context, '/employee-list-table');
       }
-      // else {
-      //   CustomSnackBar.show(
-      //     context,
-      //     message: result['message'],
-      //     isSuccess: false,
-      //     icon: Icons.gpp_bad_outlined,
-      //   );
-      // }
     }
   }
 }

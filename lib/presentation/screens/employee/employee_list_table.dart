@@ -5,6 +5,8 @@ import 'package:atten_fi/core/providers/employee_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/custom_ad_bottom_bar.dart';
 import '../../widgets/custom_snackbar.dart';
 
@@ -20,6 +22,8 @@ class EmployeeListTable extends StatelessWidget {
     required String employeeName,
     required String userToken,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -27,25 +31,27 @@ class EmployeeListTable extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.warning_amber_rounded, color: Colors.red, size: 28),
-              SizedBox(width: 10),
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.red,
+                size: 28,
+              ),
+              const SizedBox(width: 10),
               Text(
-                "নিশ্চিত করুন",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                l10n.confirmTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
-          content: Text(
-            "আপনি কি  নিশ্চিত '$employeeName' কে তালিকা থেকে ডিলিট করতে চান?",
-          ),
+          content: Text(l10n.deleteEmployeeConfirmation(employeeName)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text(
-                "বাতিল",
-                style: TextStyle(
+              child: Text(
+                l10n.cancel,
+                style: const TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
                 ),
@@ -59,9 +65,9 @@ class EmployeeListTable extends StatelessWidget {
                 ),
               ),
               onPressed: () async {
-                Navigator.pop(dialogContext); // ডায়ালগ বন্ধ করা
+                Navigator.pop(dialogContext); // ডায়ালগ বন্ধ করা
 
-                // স্ক্রিনে প্রোগ্রেস লোডিং দেখানো
+                // প্রোগ্রেস লোডিং দেখানো
                 showDialog(
                   context: context,
                   barrierDismissible: false,
@@ -69,7 +75,7 @@ class EmployeeListTable extends StatelessWidget {
                       const Center(child: CircularProgressIndicator()),
                 );
 
-                // এপিআই রিকোয়েস্ট ট্রিগার
+                // এপিআই রিকোয়েস্ট ট্রিগার
                 final result = await context
                     .read<EmployeeProvider>()
                     .deleteEmployee(id: employeeId, userToken: userToken);
@@ -80,7 +86,7 @@ class EmployeeListTable extends StatelessWidget {
                   if (context.mounted) {
                     CustomSnackBar.show(
                       context,
-                      message: "ডিলিট করা হয়েছে",
+                      message: l10n.deletedSuccessfully,
                       isSuccess: true,
                       icon: Icons.delete_outline,
                     );
@@ -89,16 +95,16 @@ class EmployeeListTable extends StatelessWidget {
                   if (context.mounted) {
                     CustomSnackBar.show(
                       context,
-                      message: " আবার চেষ্ট করুন! ",
+                      message: l10n.tryAgain,
                       isSuccess: false,
                       icon: Icons.error_outline,
                     );
                   }
                 }
               },
-              child: const Text(
-                "ডিলিট করুন",
-                style: TextStyle(
+              child: Text(
+                l10n.delete,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -112,7 +118,9 @@ class EmployeeListTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final String? userToken = context.read<AuthProvider>().token;
+
     if (userToken != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.read<EmployeeProvider>().fetchEmployees(userToken);
@@ -123,9 +131,9 @@ class EmployeeListTable extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: const Text(
-          "সব কর্মচারীর তালিকা",
-          style: TextStyle(color: AppColors.background),
+        title: Text(
+          l10n.allEmployeesList,
+          style: const TextStyle(color: AppColors.background),
         ),
         elevation: 0,
         leading: IconButton(
@@ -142,9 +150,7 @@ class EmployeeListTable extends StatelessWidget {
           }
 
           if (provider.employeeList.isEmpty) {
-            return const Center(
-              child: Text("কোনো কর্মচারীর তথ্য পাওয়া যায়নি।"),
-            );
+            return Center(child: Text(l10n.noEmployeeDataFound));
           }
 
           return SingleChildScrollView(
@@ -157,7 +163,7 @@ class EmployeeListTable extends StatelessWidget {
                   onChanged: (value) =>
                       _searchNotifier.value = value.trim().toLowerCase(),
                   decoration: InputDecoration(
-                    hintText: "নাম বা আইডি দিয়ে খুঁজুন...",
+                    hintText: l10n.searchHint,
                     prefixIcon: const Icon(
                       Icons.search,
                       color: AppColors.primary,
@@ -203,9 +209,9 @@ class EmployeeListTable extends StatelessWidget {
                     }).toList();
 
                     if (filteredList.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.all(20.0),
-                        child: Text("পাওয়া যায়নি!"),
+                      return Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text(l10n.notFound),
                       );
                     }
 
@@ -217,30 +223,35 @@ class EmployeeListTable extends StatelessWidget {
                         border: Border.all(color: Colors.grey[200]!),
                       ),
                       child: DataTable(
-                        columnSpacing:
-                            10, // ৩টি বাটন ফিট করার জন্য স্পেস কমানো হলো
+                        columnSpacing: 10,
                         dataRowMinHeight: 60,
                         dataRowMaxHeight: 65,
                         headingRowColor: WidgetStateProperty.all(
                           const Color(0xFFF8F9FA),
                         ),
-                        columns: const [
+                        columns: [
                           DataColumn(
                             label: Text(
-                              'ছবি',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              l10n.image,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           DataColumn(
                             label: Text(
-                              'বিবরন',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              l10n.details,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           DataColumn(
                             label: Text(
-                              'অ্যাকশন',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              l10n.action,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
@@ -264,21 +275,25 @@ class EmployeeListTable extends StatelessWidget {
         onPressed: () => Navigator.pushNamed(context, '/add-employee'),
         backgroundColor: AppColors.primary,
         icon: const Icon(Icons.person_add, color: Colors.white),
-        label: const Text(
-          "কর্মচারী যোগ করুন",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        label: Text(
+          l10n.addEmployee,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       bottomNavigationBar: CustomAdBottomBar(),
     );
   }
 
-  // ৫. অ্যাকশন কলামে ৩টি বাটনসহ ডাইনামিক রো বিল্ডার
   DataRow _buildEmployeeRow({
     required BuildContext context,
     required EmployeeModel employee,
     required String userToken,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+
     return DataRow(
       cells: [
         // ১. ছবি কলাম
@@ -324,7 +339,7 @@ class EmployeeListTable extends StatelessWidget {
               Text(
                 employee.employeeId != null && employee.employeeId!.isNotEmpty
                     ? employee.employeeId!
-                    : 'আইডি নেই',
+                    : l10n.noId,
                 style: TextStyle(
                   fontSize: 11,
                   color: Colors.grey[600],
@@ -335,11 +350,11 @@ class EmployeeListTable extends StatelessWidget {
           ),
         ),
 
+        // ৩. অ্যাকশন কলাম
         DataCell(
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // ভিউ বাটন
               IconButton(
                 constraints: const BoxConstraints(),
                 padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -356,8 +371,6 @@ class EmployeeListTable extends StatelessWidget {
                   );
                 },
               ),
-
-              // ডিলিট বাটন
               IconButton(
                 constraints: const BoxConstraints(),
                 padding: const EdgeInsets.symmetric(horizontal: 4),

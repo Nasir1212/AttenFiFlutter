@@ -6,12 +6,14 @@ import 'package:atten_fi/presentation/widgets/input_field.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/model/office_model.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/custom_ad_bottom_bar.dart';
 import '../../widgets/custom_snackbar.dart';
 
 class OfficeListScreen extends StatelessWidget {
   const OfficeListScreen({super.key});
 
+  // ডাটা রিফ্রেশ করা
   // ডাটা রিফ্রেশ করা
   Future<void> _unassignWifiFromOffice(
     BuildContext context,
@@ -27,10 +29,13 @@ class OfficeListScreen extends StatelessWidget {
       );
 
       if (!context.mounted) return;
+
+      final l10n = AppLocalizations.of(context)!;
+
       CustomSnackBar.show(
         context,
         icon: Icons.check,
-        message: "রাউটারটি সফলভাবে রিমুভ করা হয়েছে",
+        message: l10n.routerRemovedSuccess,
         isSuccess: true,
       );
     }
@@ -72,10 +77,12 @@ class OfficeListScreen extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) {
+      builder: (sheetContext) {
+        final l10n = AppLocalizations.of(sheetContext)!;
+
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+            bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
           ), // কিবোর্ডের জন্য স্পেস
           child: Container(
             decoration: const BoxDecoration(
@@ -93,9 +100,9 @@ class OfficeListScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "অফিস তথ্য সংশোধন",
-                      style: TextStyle(
+                    Text(
+                      l10n.editOfficeTitle,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: primaryColor,
@@ -103,53 +110,53 @@ class OfficeListScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     InputField(
-                      label: "অফিসের নাম",
+                      label: l10n.officeNameLabel,
                       controller: nameController,
                       icon: Icons.business,
-                      hint: "উদা: প্রধান কার্যালয়",
+                      hint: l10n.officeNameHint,
                       validator: (val) => val == null || val.trim().isEmpty
-                          ? "নাম আবশ্যক"
+                          ? l10n.officeNameRequired
                           : null,
                     ),
 
                     const SizedBox(height: 15),
                     InputField(
-                      label: "অফিসের ঠিকানা",
+                      label: l10n.officeAddressLabel,
                       controller: addressController,
                       icon: Icons.location_on,
-                      hint: "উদা: আগ্রাবাদ, চট্টগ্রাম",
+                      hint: l10n.officeAddressHint,
                       validator: (val) => val == null || val.trim().isEmpty
-                          ? "ঠিকানা আবশ্যক"
+                          ? l10n.officeAddressRequired
                           : null,
                     ),
                     const SizedBox(height: 25),
                     InputField(
-                      label: "অফিসের শুরুর সময়",
+                      label: l10n.startTimeLabel,
                       controller: startTimeController,
                       icon: Icons.access_time_filled_rounded,
-                      hint: "উদা: 09:00:00",
+                      hint: l10n.startTimeHint,
                       validator: (val) => val == null || val.trim().isEmpty
-                          ? "অফিসের শুরুর সময় আবশ্যক"
+                          ? l10n.startTimeRequired
                           : null,
                     ),
                     const SizedBox(height: 25),
                     InputField(
-                      label: "লেট ট্র্যাকিং কত মিনিট ?",
+                      label: l10n.lateTrackingLabel,
                       controller: graceTimeController,
                       icon: Icons.running_with_errors_rounded,
-                      hint: "উদা: 09:15:00",
+                      hint: l10n.lateTrackingHint,
                       validator: (val) => val == null || val.trim().isEmpty
-                          ? "লেট ট্র্যাকিং সময় আবশ্যক"
+                          ? l10n.lateTrackingRequired
                           : null,
                     ),
                     const SizedBox(height: 25),
                     InputField(
-                      label: "অফিসের ছুটির সময়",
+                      label: l10n.endTimeLabel,
                       controller: endTimeController,
                       icon: Icons.access_time_filled_rounded,
-                      hint: "17:00:00",
+                      hint: l10n.endTimeHint,
                       validator: (val) => val == null || val.trim().isEmpty
-                          ? "অফিসের ছুটির সময় আবশ্যক"
+                          ? l10n.endTimeRequired
                           : null,
                     ),
                     const SizedBox(height: 25),
@@ -158,7 +165,7 @@ class OfficeListScreen extends StatelessWidget {
                       width: double.infinity,
                       height: 50,
                       child: PrimaryButton(
-                        label: "তথ্য আপডেট করুন",
+                        label: l10n.updateInfoButton,
                         icon: Icons.update,
                         onPressed: () async {
                           if (!formKey.currentState!.validate()) return;
@@ -181,20 +188,20 @@ class OfficeListScreen extends StatelessWidget {
                                 office: updatedOffice,
                               );
 
-                          if (context.mounted) {
-                            Navigator.pop(context);
+                          if (sheetContext.mounted) {
+                            Navigator.pop(sheetContext);
                           }
 
                           if (success && context.mounted) {
                             CustomSnackBar.show(
                               context,
-                              message: "অফিস সফলভাবে আপডেট হয়েছে!",
+                              message: l10n.officeUpdateSuccess,
                               isSuccess: true,
                             );
                           } else if (context.mounted) {
                             CustomSnackBar.show(
                               context,
-                              message: "আপডেট করতে সমস্যা হয়েছে",
+                              message: l10n.officeUpdateFailed,
                               isSuccess: false,
                             );
                           }
@@ -214,27 +221,30 @@ class OfficeListScreen extends StatelessWidget {
   void _showDeleteConfirmation(BuildContext context, OfficeModel office) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
+        final l10n = AppLocalizations.of(dialogContext)!;
+
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
           title: Row(
-            children: const [
-              Icon(Icons.warning_amber_rounded, color: Colors.red),
-              SizedBox(width: 10),
-              Text("নিশ্চিতকরণ", style: TextStyle(fontWeight: FontWeight.bold)),
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.red),
+              const SizedBox(width: 10),
+              Text(
+                l10n.confirmationTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
-          content: Text(
-            "'${office.name}' অফিসটি ডিলিট করতে চান? এর সাথে যুক্ত সকল ওয়াইফাই ডাটাও মুছে যেতে পারে।",
-          ),
+          content: Text(l10n.deleteOfficeConfirmation(office.name)),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                "না, থাক",
-                style: TextStyle(color: Colors.grey),
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(
+                l10n.cancel,
+                style: const TextStyle(color: Colors.grey),
               ),
             ),
             ElevatedButton(
@@ -242,7 +252,7 @@ class OfficeListScreen extends StatelessWidget {
                 final token = context.read<AuthProvider>().token;
                 if (token == null) return;
 
-                Navigator.pop(context); // পপআপ বন্ধ
+                Navigator.pop(dialogContext); // পপআপ বন্ধ
 
                 final success = await context
                     .read<OfficeProvider>()
@@ -251,14 +261,14 @@ class OfficeListScreen extends StatelessWidget {
                 if (success && context.mounted) {
                   CustomSnackBar.show(
                     context,
-                    message: "অফিসটি সফলভাবে মুছে ফেলা হয়েছে",
+                    message: l10n.officeDeleteSuccess,
                     isSuccess: true,
                     icon: Icons.delete_sweep,
                   );
                 } else if (context.mounted) {
                   CustomSnackBar.show(
                     context,
-                    message: "মুছে ফেলতে সমস্যা হয়েছে",
+                    message: l10n.officeDeleteFailed,
                     isSuccess: false,
                   );
                 }
@@ -270,7 +280,7 @@ class OfficeListScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text("হ্যাঁ, ডিলিট করুন"),
+              child: Text(l10n.delete),
             ),
           ],
         );
@@ -294,6 +304,7 @@ class OfficeListScreen extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         return Container(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height * 0.6,
@@ -317,33 +328,16 @@ class OfficeListScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "${office.name} - সেটকৃত রাউটার",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: primaryColor,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle, color: primaryColor),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/wifi-setup',
-                          arguments: office.id,
-                        );
-                      },
-                    ),
-                  ],
+
+              Expanded(
+                child: Text(
+                  l10n.configuredRoutersForOffice(office.name),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               const Divider(height: 1),
@@ -357,6 +351,8 @@ class OfficeListScreen extends StatelessWidget {
                     final wifiList = provider.assignedWifisList;
 
                     if (wifiList.isEmpty) {
+                      final l10n = AppLocalizations.of(context)!;
+
                       return Center(
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
@@ -369,9 +365,9 @@ class OfficeListScreen extends StatelessWidget {
                                 color: Colors.grey[400],
                               ),
                               const SizedBox(height: 10),
-                              const Text(
-                                "এই অফিসের জন্য কোনো রাউটার সেটআপ করা নেই!",
-                                style: TextStyle(
+                              Text(
+                                l10n.noRouterSetup,
+                                style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 13,
                                 ),
@@ -391,9 +387,9 @@ class OfficeListScreen extends StatelessWidget {
                                   Icons.add,
                                   color: primaryColor,
                                 ),
-                                label: const Text(
-                                  "নতুন ওয়াইফাই যুক্ত করুন",
-                                  style: TextStyle(color: primaryColor),
+                                label: Text(
+                                  l10n.addNewWifi,
+                                  style: const TextStyle(color: primaryColor),
                                 ),
                               ),
                             ],
@@ -475,6 +471,8 @@ class OfficeListScreen extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+
         return Container(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height * 0.6,
@@ -498,6 +496,7 @@ class OfficeListScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -505,7 +504,7 @@ class OfficeListScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        "${office.name} -তে রাউটার সেট করুন",
+                        l10n.setRouterForOffice(office.name),
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -527,6 +526,7 @@ class OfficeListScreen extends StatelessWidget {
                   ],
                 ),
               ),
+
               const Divider(height: 1),
               Expanded(
                 child: Consumer<OfficeProvider>(
@@ -538,6 +538,8 @@ class OfficeListScreen extends StatelessWidget {
                     final wifiList = provider.unassignedWifisList;
 
                     if (wifiList.isEmpty) {
+                      final l10n = AppLocalizations.of(context)!;
+
                       return Center(
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
@@ -550,9 +552,9 @@ class OfficeListScreen extends StatelessWidget {
                                 color: Colors.grey[400],
                               ),
                               const SizedBox(height: 10),
-                              const Text(
-                                "এই অফিসের জন্য কোনো রাউটার সেটআপ করা নেই!",
-                                style: TextStyle(
+                              Text(
+                                l10n.noRouterSetup,
+                                style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 13,
                                 ),
@@ -572,9 +574,9 @@ class OfficeListScreen extends StatelessWidget {
                                   Icons.add,
                                   color: primaryColor,
                                 ),
-                                label: const Text(
-                                  "নতুন ওয়াইফাই যুক্ত করুন",
-                                  style: TextStyle(color: primaryColor),
+                                label: Text(
+                                  l10n.addNewWifi,
+                                  style: const TextStyle(color: primaryColor),
                                 ),
                               ),
                             ],
@@ -651,9 +653,9 @@ class OfficeListScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: const Text(
-          "অফিস সমূহের তালিকা",
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          AppLocalizations.of(context)!.officeListTitle,
+          style: const TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -677,6 +679,8 @@ class OfficeListScreen extends StatelessWidget {
             final offices = provider.officesList;
 
             if (offices.isEmpty) {
+              final l10n = AppLocalizations.of(context)!;
+
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -687,9 +691,9 @@ class OfficeListScreen extends StatelessWidget {
                       color: Colors.grey[400],
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      "কোনো অফিস যুক্ত করা হয়নি!",
-                      style: TextStyle(color: Colors.grey),
+                    Text(
+                      l10n.noOfficeAdded,
+                      style: const TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
@@ -700,6 +704,7 @@ class OfficeListScreen extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               itemCount: offices.length,
               itemBuilder: (context, index) {
+                final l10n = AppLocalizations.of(context)!;
                 final office = offices[index];
 
                 return Card(
@@ -754,56 +759,56 @@ class OfficeListScreen extends StatelessWidget {
                                 PopupMenuItem(
                                   value: 'edit',
                                   child: Row(
-                                    children: const [
-                                      Icon(
+                                    children: [
+                                      const Icon(
                                         Icons.edit,
                                         color: Colors.blue,
                                         size: 20,
                                       ),
-                                      SizedBox(width: 8),
-                                      Text('সংশোধন '),
+                                      const SizedBox(width: 8),
+                                      Text(l10n.edit),
                                     ],
                                   ),
                                 ),
                                 PopupMenuItem(
                                   value: 'delete',
                                   child: Row(
-                                    children: const [
-                                      Icon(
+                                    children: [
+                                      const Icon(
                                         Icons.delete,
                                         color: Colors.red,
                                         size: 20,
                                       ),
-                                      SizedBox(width: 8),
-                                      Text('মুছে ফেলুন'),
+                                      const SizedBox(width: 8),
+                                      Text(l10n.delete),
                                     ],
                                   ),
                                 ),
                                 PopupMenuItem(
                                   value: 'setR',
                                   child: Row(
-                                    children: const [
-                                      Icon(
+                                    children: [
+                                      const Icon(
                                         Icons.router,
                                         color: AppColors.accent,
                                         size: 20,
                                       ),
-                                      SizedBox(width: 8),
-                                      Text('রাউটার সেট করুন'),
+                                      const SizedBox(width: 8),
+                                      Text(l10n.setRouter),
                                     ],
                                   ),
                                 ),
                                 PopupMenuItem(
                                   value: 'getR',
                                   child: Row(
-                                    children: const [
-                                      Icon(
+                                    children: [
+                                      const Icon(
                                         Icons.router_sharp,
                                         color: AppColors.secondary,
                                         size: 20,
                                       ),
-                                      SizedBox(width: 8),
-                                      Text('রাউটার লিস্ট '),
+                                      const SizedBox(width: 8),
+                                      Text(l10n.routerList),
                                     ],
                                   ),
                                 ),
@@ -828,7 +833,7 @@ class OfficeListScreen extends StatelessWidget {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                office.address ?? "ঠিকানা দেওয়া হয়নি",
+                                office.address ?? l10n.noAddress,
                                 style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 13,
@@ -852,29 +857,27 @@ class OfficeListScreen extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              // অফিস শুরুর সময়
+                              // অফিস শুরুর সময়
                               _buildTimeColumn(
                                 icon: Icons.access_time_filled_rounded,
                                 iconColor: Colors.green,
-                                label: "শুরু",
-                                time:
-                                    office.startTime ??
-                                    "09:00:00", // ডাটাবেজ থেকে আসা ভ্যালু
+                                label: l10n.startTime,
+                                time: office.startTime ?? "09:00:00",
                               ),
 
-                              // গ্রেস পিরিয়ড বা লেট কাউন্ট
+                              // গ্রেস পিরিয়ড বা লেট কাউন্ট
                               _buildTimeColumn(
                                 icon: Icons.running_with_errors_rounded,
                                 iconColor: Colors.orange,
-                                label: "লেট ট্র্যাকিং",
+                                label: l10n.lateTracking,
                                 time: office.graceTime ?? "09:15:00",
                               ),
 
-                              // অফিস শেষের সময়
+                              // অফিস শেষের সময়
                               _buildTimeColumn(
                                 icon: Icons.logout_rounded,
                                 iconColor: Colors.red,
-                                label: "ছুটি",
+                                label: l10n.endTime,
                                 time: office.endTime ?? "17:00:00",
                               ),
                             ],
@@ -894,6 +897,7 @@ class OfficeListScreen extends StatelessWidget {
   }
 
   void _setRouter(BuildContext context, int wID, int offId) async {
+    final l10n = AppLocalizations.of(context)!;
     final token = context.read<AuthProvider>().token;
     if (token == null) return;
 
@@ -906,13 +910,13 @@ class OfficeListScreen extends StatelessWidget {
     if (success && context.mounted) {
       CustomSnackBar.show(
         context,
-        message: "অফিসে রাউটারটি সফলভাবে সেট করা হয়েছে!",
+        message: l10n.routerSetSuccess,
         isSuccess: true,
       );
     } else if (context.mounted) {
       CustomSnackBar.show(
         context,
-        message: "রাউটার সেট করতে সমস্যা হয়েছে",
+        message: l10n.routerSetFailed,
         isSuccess: false,
       );
     }

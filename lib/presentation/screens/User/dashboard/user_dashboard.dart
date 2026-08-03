@@ -7,6 +7,7 @@ import 'package:atten_fi/core/constants/app_colors.dart';
 import '../../../../core/model/employee_model.dart';
 import '../../../../core/providers/attendance_provider.dart';
 import '../../../../core/providers/auth_provider.dart' show AuthProvider;
+import '../../../../l10n/app_localizations.dart';
 import '../../../widgets/bottom_navItem.dart';
 import '../../role_selection_screen.dart';
 
@@ -44,34 +45,37 @@ class UserDashboard extends StatelessWidget {
   }
 
   void _logout(BuildContext context) async {
-    // 📋 লগআউট করার আগে ইউজারকে কনফার্মেশন ডায়ালগ দেখানো
+    final l10n = AppLocalizations.of(context)!;
+
+    // 📋 লগআউট করার আগে ইউজারকে কনফার্মেশন ডায়ালগ দেখানো
     bool? confirmLogout = await showDialog<bool>(
       context: context,
-      barrierDismissible: false, // ডায়ালগের বাইরে ক্লিক করলে যেন বন্ধ না হয়
+      barrierDismissible: false, // ডায়ালগের বাইরে ক্লিক করলে যেন বন্ধ না হয়
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.logout_rounded, color: Colors.redAccent),
-              SizedBox(width: 8),
+              const Icon(Icons.logout_rounded, color: Colors.redAccent),
+              const SizedBox(width: 8),
               Text(
-                'লগআউট নিশ্চিত করুন',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                l10n.logoutConfirmTitle,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
             ],
           ),
-          content: const Text(
-            'আপনি কি নিশ্চিতভাবেই আপনার অ্যাকাউন্ট থেকে লগআউট করতে চান?',
-          ),
+          content: Text(l10n.logoutConfirmMessage),
           actions: [
             // না বাটন
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
               child: Text(
-                'না',
+                l10n.noButton,
                 style: TextStyle(
                   color: Colors.grey.shade600,
                   fontWeight: FontWeight.bold,
@@ -87,9 +91,9 @@ class UserDashboard extends StatelessWidget {
                 ),
               ),
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text(
-                'হ্যাঁ, লগআউট করুন',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                l10n.yesLogoutButton,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],
@@ -97,10 +101,10 @@ class UserDashboard extends StatelessWidget {
       },
     );
 
-    // ইউজার যদি 'না' চাপে বা ডায়ালগ ক্যানসেল করে, তবে এখানেই ফাংশন শেষ
+    // ইউজার যদি 'না' চাপে বা ডায়ালগ ক্যানসেল করে, তবে এখানেই ফাংশন শেষ
     if (confirmLogout != true) return;
 
-    // 🔄 লোডিং ডায়ালগ দেখানো (প্রসেস হওয়ার সময় ইউজার যেন স্ক্রিনে অন্য কোথাও চাপ না দিতে পারে)
+    // 🔄 লোডিং ডায়ালগ দেখানো (প্রসেস হওয়ার সময় ইউজার যেন স্ক্রিনে অন্য কোথাও চাপ না দিতে পারে)
     if (!context.mounted) return;
     showDialog(
       context: context,
@@ -108,11 +112,9 @@ class UserDashboard extends StatelessWidget {
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
 
-    // 🔑 প্রোভাইডার থেকে টোকেন নিয়ে লগআউট মেথড কল করা
+    // 🔑 প্রোভাইডার থেকে টোকেন নিয়ে লগআউট মেথড কল করা
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    String currentToken =
-        authProvider.token ??
-        ""; // আপনার প্রোভাইডারে টোকেনের গেটার ভ্যারিয়েবলটি দিন
+    String currentToken = authProvider.token ?? "";
 
     bool isLoggedOut = await authProvider.logout(currentToken);
 
@@ -129,10 +131,7 @@ class UserDashboard extends StatelessWidget {
     } else {
       // কোনো কারণে API এরর আসলে ইউজারকে মেসেজ দেখানো
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('লগআউট করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(l10n.logoutError), backgroundColor: Colors.red),
       );
     }
   }
@@ -164,9 +163,9 @@ class UserDashboard extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          "ইউজার ড্যাশবোর্ড",
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.userDashboardTitle,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
             color: Colors.white,
@@ -205,12 +204,7 @@ class UserDashboard extends StatelessWidget {
           children: [
             // 🏢 ১. মিনিমালিস্ট লোগো হেডার (শুধুমাত্র লোগো)
             Container(
-              padding: const EdgeInsets.fromLTRB(
-                70,
-                60,
-                70,
-                30,
-              ), // ওপরে এবং নিচে পর্যাপ্ত গ্যাপ রাখার জন্য
+              padding: const EdgeInsets.fromLTRB(70, 60, 70, 30),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -219,11 +213,9 @@ class UserDashboard extends StatelessWidget {
                 ),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(
-                  10,
-                ), // বর্ডার রাউন্ড করার জন্য
+                borderRadius: BorderRadius.circular(10),
                 child: Container(
-                  color: Colors.white, // ব্যাকগ্রাউন্ড সাদা
+                  color: Colors.white,
                   padding: const EdgeInsets.all(12),
                   child: Image.asset(
                     'assets/images/logo.png',
@@ -243,10 +235,12 @@ class UserDashboard extends StatelessWidget {
                 ),
                 children: [
                   // --- সেকশন ১: ব্যক্তিগত ও ট্র্যাকিং ---
-                  _buildSectionTitle("ব্যক্তিগত ট্র্যাকিং"),
+                  _buildSectionTitle(
+                    AppLocalizations.of(context)!.personalTrackingSection,
+                  ),
                   _buildDrawerItem(
                     icon: Icons.person_outline_rounded,
-                    label: 'আমার প্রোফাইল',
+                    label: AppLocalizations.of(context)!.myProfileMenu,
                     iconColor: primaryColor,
                     onTap: () {
                       Navigator.pop(context);
@@ -255,7 +249,7 @@ class UserDashboard extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     icon: Icons.history_toggle_off_rounded,
-                    label: 'হাজিরা হিস্ট্রি',
+                    label: AppLocalizations.of(context)!.attendanceHistoryMenu,
                     iconColor: primaryColor,
                     onTap: () {
                       Navigator.pop(context);
@@ -265,10 +259,12 @@ class UserDashboard extends StatelessWidget {
 
                   const SizedBox(height: 12),
                   // --- সেকশন ২: আবেদন ও অনুরোধ ---
-                  _buildSectionTitle("আবেদন ও অনুরোধ"),
+                  _buildSectionTitle(
+                    AppLocalizations.of(context)!.applicationsSection,
+                  ),
                   _buildDrawerItem(
                     icon: Icons.calendar_today_outlined,
-                    label: 'ছুটির আবেদন (Leave)',
+                    label: AppLocalizations.of(context)!.leaveApplicationMenu,
                     iconColor: Colors.teal,
                     onTap: () {
                       Navigator.pop(context);
@@ -277,7 +273,7 @@ class UserDashboard extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     icon: Icons.more_time_rounded,
-                    label: 'লেট কনডোন আবেদন',
+                    label: AppLocalizations.of(context)!.lateCondonationMenu,
                     iconColor: Colors.orange,
                     onTap: () {
                       Navigator.pop(context);
@@ -286,10 +282,12 @@ class UserDashboard extends StatelessWidget {
 
                   const SizedBox(height: 12),
                   // --- সেকশন ৩: অন্যান্য ও সাপোর্ট ---
-                  _buildSectionTitle("অন্যান্য"),
+                  _buildSectionTitle(
+                    AppLocalizations.of(context)!.othersSection,
+                  ),
                   _buildDrawerItem(
                     icon: Icons.gavel_rounded,
-                    label: 'কোম্পানি পলিসি',
+                    label: AppLocalizations.of(context)!.companyPolicyMenu,
                     iconColor: Colors.blueGrey,
                     onTap: () {
                       Navigator.pop(context);
@@ -297,7 +295,7 @@ class UserDashboard extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     icon: Icons.support_agent_rounded,
-                    label: 'হেল্প ও সাপোর্ট',
+                    label: AppLocalizations.of(context)!.helpAndSupportMenu,
                     iconColor: Colors.purple,
                     onTap: () {
                       Navigator.pop(context);
@@ -315,7 +313,7 @@ class UserDashboard extends StatelessWidget {
                   // --- লগআউট বাটন ---
                   _buildDrawerItem(
                     icon: Icons.logout_rounded,
-                    label: 'লগআউট',
+                    label: AppLocalizations.of(context)!.logoutMenu,
                     iconColor: Colors.redAccent,
                     textColor: Colors.redAccent,
                     tileColor: Colors.red.shade50,
@@ -333,7 +331,7 @@ class UserDashboard extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Center(
                 child: Text(
-                  "Version 1.0.0",
+                  AppLocalizations.of(context)!.appVersion,
                   style: TextStyle(
                     color: Colors.grey.shade500,
                     fontSize: 11,
@@ -365,7 +363,7 @@ class UserDashboard extends StatelessWidget {
             children: [
               BottomNavItem(
                 icon: Icons.home_rounded,
-                label: "হোম",
+                label: AppLocalizations.of(context)!.navHome,
                 color: primaryColor,
                 isActive: true,
                 onTap: () {
@@ -374,7 +372,7 @@ class UserDashboard extends StatelessWidget {
               ),
               BottomNavItem(
                 icon: Icons.history_rounded,
-                label: "হিস্ট্রি",
+                label: AppLocalizations.of(context)!.navHistory,
                 color: Colors.grey,
                 isActive: false,
                 onTap: () {
@@ -383,7 +381,7 @@ class UserDashboard extends StatelessWidget {
               ),
               BottomNavItem(
                 icon: Icons.person,
-                label: "প্রোফাইল",
+                label: AppLocalizations.of(context)!.navProfile,
                 color: Colors.grey,
                 isActive: false,
                 onTap: () {
@@ -397,25 +395,24 @@ class UserDashboard extends StatelessWidget {
 
       body: SafeArea(
         child: FutureBuilder<SharedPreferences>(
-          // এখানে শুধু SharedPreferences ইন্সট্যান্সটি একবার লোড করা হচ্ছে
           future: SharedPreferences.getInstance(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
 
+            final l10n = AppLocalizations.of(context)!;
             final prefs = snapshot.data!;
             final String? profileStr = prefs.getString('user_profile');
             final employee = _getEmployeeFromPrefs(profileStr);
 
-            String name = employee?.name ?? "পরিচিত কর্মী";
+            String name = employee?.name ?? l10n.defaultEmployeeName;
             String empId = employee?.employeeId ?? "...";
             String? imageUrl = employee?.imageUrl;
 
             return RefreshIndicator(
               color: primaryColor,
-              onRefresh: () =>
-                  _handleRefresh(context), // 🎯 পারফেক্ট অ্যাসিনক্রোনাস কল
+              onRefresh: () => _handleRefresh(context),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Column(
@@ -463,7 +460,7 @@ class UserDashboard extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  "আইডি: $empId",
+                                  l10n.idLabel(empId),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: AppColors.white,
@@ -486,7 +483,7 @@ class UserDashboard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "এই মাসের রিপোর্ট (May 2026)",
+                                l10n.monthlyReportTitle("May 2026"),
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -504,22 +501,22 @@ class UserDashboard extends StatelessWidget {
                           Row(
                             children: [
                               _buildStatCard(
-                                "✅ উপস্থিত",
-                                "${provider.totalPresentDays} দিন",
+                                l10n.statPresent,
+                                l10n.daysCount(provider.totalPresentDays),
                                 Colors.green[50]!,
                                 Colors.green,
                               ),
                               const SizedBox(width: 8),
                               _buildStatCard(
-                                "⚠️ লেট",
-                                "${provider.totalLateDays} দিন",
+                                l10n.statLate,
+                                l10n.daysCount(provider.totalLateDays),
                                 Colors.orange[50]!,
                                 Colors.orange,
                               ),
                               const SizedBox(width: 8),
                               _buildStatCard(
-                                "❌ ছুটি",
-                                "${provider.totalLeaveDays} দিন",
+                                l10n.statLeave,
+                                l10n.daysCount(provider.totalLeaveDays),
                                 Colors.red[50]!,
                                 Colors.redAccent,
                               ),
@@ -547,22 +544,22 @@ class UserDashboard extends StatelessWidget {
                               size: 24,
                             ),
                             const SizedBox(width: 10),
-                            const Expanded(
+                            Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "সর্বশেষ নোটিশ",
-                                    style: TextStyle(
+                                    l10n.latestNotice,
+                                    style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.blue,
                                     ),
                                   ),
-                                  SizedBox(height: 2),
+                                  const SizedBox(height: 2),
                                   Text(
-                                    "আজ বিকেল ৪টায় অল-টিম উইকলি মিটিং অনুষ্ঠিত হবে।",
-                                    style: TextStyle(
+                                    l10n.noticeContent,
+                                    style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
                                       color: Colors.black87,
@@ -605,7 +602,7 @@ class UserDashboard extends StatelessWidget {
                                   if (token == null) {
                                     _showSnackBar(
                                       context,
-                                      "লগইন সেশন শেষ হয়ে গেছে!",
+                                      l10n.sessionExpired,
                                       isError: true,
                                     );
                                     _logout(context);
@@ -698,8 +695,8 @@ class UserDashboard extends StatelessWidget {
                                             const SizedBox(height: 2),
                                             Text(
                                               provider.isCheckedIn
-                                                  ? "CHECK-OUT"
-                                                  : "CHECK-IN",
+                                                  ? l10n.checkOutUpper
+                                                  : l10n.checkInUpper,
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 12,
@@ -715,10 +712,10 @@ class UserDashboard extends StatelessWidget {
                           const SizedBox(height: 8),
                           Text(
                             provider.isLoading
-                                ? "প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন..."
+                                ? l10n.processingWait
                                 : (provider.isCheckedIn
-                                      ? "চেক-আউট করতে চেপে ধরে রাখুন"
-                                      : "চেক-ইন করতে চেপে ধরে রাখুন"),
+                                      ? l10n.holdToCheckOut
+                                      : l10n.holdToCheckIn),
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
@@ -752,9 +749,9 @@ class UserDashboard extends StatelessWidget {
                                     color: secondaryColor,
                                   ),
                                   const SizedBox(width: 6),
-                                  const Text(
-                                    "আজকের টাইমলাইন (Today's Logs)",
-                                    style: TextStyle(
+                                  Text(
+                                    l10n.todayLogsTitle,
+                                    style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -763,14 +760,14 @@ class UserDashboard extends StatelessWidget {
                               ),
                               const Divider(height: 16, thickness: 1),
                               provider.todayLogs.isEmpty
-                                  ? const Center(
+                                  ? Center(
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                           vertical: 20.0,
                                         ),
                                         child: Text(
-                                          "আজকে এখনও কোনো হাজিরা দেওয়া হয়নি",
-                                          style: TextStyle(
+                                          l10n.noAttendanceToday,
+                                          style: const TextStyle(
                                             fontSize: 12,
                                             color: Colors.grey,
                                           ),

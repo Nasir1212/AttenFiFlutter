@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/admin_report_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/custom_ad_bottom_bar.dart';
 
 class EmployeeReportTable extends StatelessWidget {
@@ -37,15 +38,16 @@ class EmployeeReportTable extends StatelessWidget {
   Widget build(BuildContext context) {
     const Color primaryColor = Color(0xFF1A237E);
     final reportProvider = Provider.of<AdminReportProvider>(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: primaryColor,
         elevation: 0,
-        title: const Text(
-          "কর্মচারী রিপোর্ট তালিকা",
-          style: TextStyle(
+        title: Text(
+          l10n.employeeReportListTitle,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -61,7 +63,7 @@ class EmployeeReportTable extends StatelessWidget {
             reportProvider.fetchAllEmployeesReport(), // টান দিলে রিফ্রেশ হবে
         child: Column(
           children: [
-            // 🏢 অ্যাডমিন সামারিカード (ডাইনামিক)
+            // 🏢 অ্যাডমিন সামারি কার্ড (ডাইনামিক)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -77,13 +79,13 @@ class EmployeeReportTable extends StatelessWidget {
                 children: [
                   Text(
                     reportProvider.isLoading
-                        ? "লোড হচ্ছে..."
-                        : "${reportProvider.monthYear}-এর রিপোর্ট",
+                        ? l10n.loadingText
+                        : l10n.monthlyReportFormat(reportProvider.monthYear),
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "মোট কর্মচারী: ${reportProvider.totalEmployees} জন",
+                    l10n.totalEmployeesFormat(reportProvider.totalEmployees),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -103,7 +105,7 @@ class EmployeeReportTable extends StatelessWidget {
                       child: CircularProgressIndicator(),
                     ) // লোডিং ইন্ডিকেটর
                   : reportProvider.employeeReports.isEmpty
-                  ? const Center(child: Text("কোনো ডাটা পাওয়া যায়নি"))
+                  ? Center(child: Text(l10n.noDataFound))
                   : SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       scrollDirection: Axis.vertical,
@@ -114,41 +116,53 @@ class EmployeeReportTable extends StatelessWidget {
                           headingRowColor: WidgetStateProperty.all(
                             const Color(0xFFF8F9FA),
                           ),
-                          columns: const [
+                          columns: [
                             DataColumn(
                               label: Text(
-                                'আইডি',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                l10n.tableColumnId,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             DataColumn(
                               label: Text(
-                                'নাম',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                l10n.tableColumnName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             DataColumn(
                               label: Text(
-                                'উপস্থিতি',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                l10n.tableColumnAttendance,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             DataColumn(
                               label: Text(
-                                'লেট',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                l10n.tableColumnLate,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             DataColumn(
                               label: Text(
-                                'শতকরা',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                l10n.tableColumnPercentage,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             DataColumn(
                               label: Text(
-                                'অ্যাকশন',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                l10n.tableColumnAction,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -170,19 +184,7 @@ class EmployeeReportTable extends StatelessWidget {
           ],
         ),
       ),
-
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () {
-      //     // এক্সেল বা পিডিএফ ডাউনলোডের লজিক
-      //   },
-      //   backgroundColor: primaryColor,
-      //   icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
-      //   label: const Text(
-      //     "রিপোর্ট ডাউনলোড",
-      //     style: TextStyle(color: Colors.white),
-      //   ),
-      // ),
-      bottomNavigationBar: CustomAdBottomBar(),
+      bottomNavigationBar: const CustomAdBottomBar(),
     );
   }
 

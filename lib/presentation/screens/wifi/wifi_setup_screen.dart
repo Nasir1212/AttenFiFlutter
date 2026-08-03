@@ -4,7 +4,8 @@ import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:atten_fi/presentation/widgets/input_field.dart';
 import 'package:atten_fi/core/providers/auth_provider.dart';
-import 'package:atten_fi/core/providers/office_provider.dart'; // 🌟 ইম্পোর্ট করা হলো
+import 'package:atten_fi/core/providers/office_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/custom_ad_bottom_bar.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/custom_snackbar.dart';
@@ -13,7 +14,7 @@ import '../../widgets/custom_snackbar.dart';
 class WifiSetupScreen extends StatelessWidget {
   WifiSetupScreen({super.key});
 
-  final _formKey = GlobalKey<FormState>(); // 🌟 ভ্যালিডেশনের জন্য ফর্ম কি
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _ssidController = TextEditingController();
   final TextEditingController _bssidController = TextEditingController();
 
@@ -23,6 +24,7 @@ class WifiSetupScreen extends StatelessWidget {
 
   // অটো ওয়াইফাই সিঙ্ক করার মেথড
   Future<void> _autoSyncWifi(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       // ১. প্রথমে লোকেশন পারমিশন চেক ও রিকোয়েস্ট করা
       PermissionStatus status = await Permission.locationWhenInUse.status;
@@ -48,7 +50,7 @@ class WifiSetupScreen extends StatelessWidget {
         if (context.mounted && (wifiName != null || wifiBSSID != null)) {
           CustomSnackBar.show(
             context,
-            message: "বর্তমান ওয়াইফাই তথ্য অটো-সিঙ্ক করা হয়েছে!",
+            message: l10n.wifiAutoSyncedSuccess,
             isSuccess: true,
             icon: Icons.wifi_find,
           );
@@ -57,7 +59,7 @@ class WifiSetupScreen extends StatelessWidget {
         if (context.mounted) {
           CustomSnackBar.show(
             context,
-            message: "ওয়াইফাই তথ্য অটো-সিঙ্ক করতে লোকেশন পারমিশন প্রয়োজন।",
+            message: l10n.locationPermissionRequiredWifi,
             isSuccess: false,
             icon: Icons.location_off,
           );
@@ -68,8 +70,9 @@ class WifiSetupScreen extends StatelessWidget {
     }
   }
 
-  // 🌟 ডাটা ব্যাকএন্ডে সেভ করার মেথড
+  // ডাটা ব্যাকএন্ডে সেভ করার মেথড
   void _submitForm(BuildContext context, int? officeId) async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
     final String? userToken = context.read<AuthProvider>().token;
@@ -95,7 +98,7 @@ class WifiSetupScreen extends StatelessWidget {
       if (context.mounted) {
         CustomSnackBar.show(
           context,
-          message: result['message'] ?? "ওয়াইফাই সফলভাবে সংরক্ষিত হয়েছে!",
+          message: result['message'] ?? l10n.wifiSaveSuccess,
           isSuccess: true,
           icon: Icons.check_circle_outline,
         );
@@ -105,7 +108,7 @@ class WifiSetupScreen extends StatelessWidget {
       if (context.mounted) {
         CustomSnackBar.show(
           context,
-          message: result['message'] ?? "ওয়াইফাই সংরক্ষণ করতে সমস্যা হয়েছে",
+          message: result['message'] ?? l10n.wifiSaveFailed,
           isSuccess: false,
           icon: Icons.error_outline,
         );
@@ -116,8 +119,9 @@ class WifiSetupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const Color primaryColor = Color(0xFF1A237E);
+    final l10n = AppLocalizations.of(context)!;
 
-    // 🌟 রাউটিং আর্গুমেন্ট থেকে অফিস আইডি রিসিভ করা (অফিস ছাড়া আসলে null থাকবে)
+    // রাউটিং আর্গুমেন্ট থেকে অফিস আইডি রিসিভ করা (অফিস ছাড়া আসলে null থাকবে)
     final int? officeId = ModalRoute.of(context)?.settings.arguments as int?;
 
     // ট্রিক: স্ক্রিন ওপেন হওয়ার পর কন্ট্রোলার খালি থাকলে এবং আগে সিঙ্ক না হয়ে থাকলে অটো কল হবে
@@ -133,7 +137,9 @@ class WifiSetupScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: primaryColor,
         title: Text(
-          officeId != null ? "অফিস ওয়াইফাই সেটআপ" : "গ্লোবাল ওয়াইফাই সেটআপ",
+          officeId != null
+              ? l10n.officeWifiSetupTitle
+              : l10n.globalWifiSetupTitle,
           style: const TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -148,7 +154,7 @@ class WifiSetupScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(25.0),
         child: Form(
-          key: _formKey, // 🌟 ফর্ম উইজেট এবং কি যুক্ত করা হলো
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -156,46 +162,49 @@ class WifiSetupScreen extends StatelessWidget {
                 child: Icon(Icons.wifi_lock, size: 80, color: primaryColor),
               ),
               const SizedBox(height: 20),
-              const Text(
-                "অফিসের ওয়াইফাই কনফিগার করুন",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                l10n.configureOfficeWifiTitle,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const Text(
-                "সঠিও ওয়াইফাই কানেক্ট না থাকলে কর্মচারীরা হাজিরা দিতে পারবে না।",
-                style: TextStyle(color: Colors.grey, fontSize: 13),
+              Text(
+                l10n.configureOfficeWifiSubtitle,
+                style: const TextStyle(color: Colors.grey, fontSize: 13),
               ),
               const SizedBox(height: 30),
 
               // ১. ওয়াইফাই নাম (SSID)
               InputField(
-                label: "ওয়াইফাই নাম (SSID)",
+                label: l10n.wifiNameLabel,
                 controller: _ssidController,
                 icon: Icons.wifi,
-                hint: "উদা: Office_Guest_WiFi",
+                hint: l10n.wifiNameHint,
                 validator: (val) => val == null || val.trim().isEmpty
-                    ? "ওয়াইফাই নাম আবশ্যক"
+                    ? l10n.wifiNameRequired
                     : null,
               ),
               const SizedBox(height: 20),
 
               // ২. রাউটার আইডি (BSSID)
               InputField(
-                label: "রাউটার আইডি (BSSID)",
+                label: l10n.routerBssidLabel,
                 controller: _bssidController,
                 icon: Icons.fingerprint,
-                hint: "উদা: 00:0a:95:9d:68:16",
+                hint: l10n.routerBssidHint,
                 validator: (val) => val == null || val.trim().isEmpty
-                    ? "রাউটার ম্যাক/BSSID আবশ্যক"
+                    ? l10n.routerBssidRequired
                     : null,
               ),
               const SizedBox(height: 40),
 
-              // 🌟 সেভ বাটন অ্যাকশন হ্যান্ডেল করা হলো
+              // সেভ বাটন
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: PrimaryButton(
-                  label: "সেব করুন",
+                  label: l10n.saveButton,
                   icon: Icons.save,
                   onPressed: () => _submitForm(context, officeId),
                 ),
@@ -204,7 +213,7 @@ class WifiSetupScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: CustomAdBottomBar(),
+      bottomNavigationBar: const CustomAdBottomBar(),
     );
   }
 }

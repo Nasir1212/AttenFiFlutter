@@ -1,37 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/attendance_report_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/custom_ad_bottom_bar.dart';
 
 class AttendanceReportScreen extends StatelessWidget {
   const AttendanceReportScreen({super.key});
 
-  // 🗓️ কোনো প্যাকেজ ছাড়া শুধু মাস ও বছর সিলেক্ট করার কাস্টম ডায়ালগ
+  // 🗓️ কাস্টম ডায়ালগ (মাস ও বছর নির্বাচন)
   Future<void> _selectMonthYear(
     BuildContext context,
     AdminEmployeeReportProvider provider,
     int? employeeId,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     DateTime tempDate = provider.selectedDate;
 
-    final List<String> banglaMonths = [
-      'জানুয়ারী',
-      'ফেব্রুয়ারী',
-      'মার্চ',
-      'এপ্রিল',
-      'মে',
-      'জুন',
-      'জুলাই',
-      'আগস্ট',
-      'সেপ্টেম্বর',
-      'অক্টোবর',
-      'নভেম্বর',
-      'ডিসেম্বর',
+    final List<String> months = [
+      l10n.january,
+      l10n.february,
+      l10n.march,
+      l10n.april,
+      l10n.may,
+      l10n.june,
+      l10n.july,
+      l10n.august,
+      l10n.september,
+      l10n.october,
+      l10n.novembar,
+      l10n.december,
     ];
 
     final DateTime? picked = await showDialog<DateTime>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
@@ -100,7 +102,7 @@ class AttendanceReportScreen extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          banglaMonths[index],
+                          months[index],
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: isSelected
@@ -116,10 +118,10 @@ class AttendanceReportScreen extends StatelessWidget {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    "বাতিল",
-                    style: TextStyle(color: Colors.grey),
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: Text(
+                    l10n.cancel,
+                    style: const TextStyle(color: Colors.grey),
                   ),
                 ),
               ],
@@ -137,21 +139,21 @@ class AttendanceReportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const Color primaryColor = Color(0xFF1A237E);
+    final l10n = AppLocalizations.of(context)!;
 
-    // ১. রাউট আর্গুমেন্ট রিসিভ করা (StatelessWidget এ সরাসরি build এর ভেতর)
+    // ১. রাউট আর্গুমেন্ট রিসিভ করা
     final arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final int? employeeId = arguments?['employee_id'] as int?;
     final String? employeeName = arguments?['name'] as String?;
 
-    // ২. স্ক্রিন লোড হওয়ার সাথে সাথে একবার ব্যাকএন্ড এপিআই ট্রিগার করা
+    // ২. ব্যাকএন্ড এপিআই ট্রিগার
     if (employeeId != null) {
       Future.delayed(Duration.zero, () {
         final provider = Provider.of<AdminEmployeeReportProvider>(
           context,
           listen: false,
         );
-        // বার বার রিলোড হওয়া আটকাতে কারেন্ট এমপ্লয়ি চেক করে নেওয়া ভালো
         provider.fetchEmployeeReportForAdmin(employeeId);
       });
     }
@@ -162,7 +164,9 @@ class AttendanceReportScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         elevation: 0,
         title: Text(
-          employeeName != null ? "$employeeName - রিপোর্ট" : "উপস্থিতি রিপোর্ট",
+          employeeName != null
+              ? l10n.employeeReportTitle(employeeName)
+              : l10n.attendanceReportTitle,
           style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
         leading: IconButton(
@@ -222,9 +226,9 @@ class AttendanceReportScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "রিপোর্টের সময়সীমা (মাস/বছর)",
-                                style: TextStyle(
+                              Text(
+                                l10n.reportPeriodLabel,
+                                style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey,
                                 ),
@@ -232,7 +236,7 @@ class AttendanceReportScreen extends StatelessWidget {
                               Text(
                                 provider.monthYear.isNotEmpty
                                     ? provider.monthYear
-                                    : "লোড হচ্ছে...",
+                                    : l10n.loading,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -254,21 +258,24 @@ class AttendanceReportScreen extends StatelessWidget {
                 const SizedBox(height: 25),
 
                 // সংক্ষিপ্ত রিপোর্ট (Summary)
-                const Text(
-                  "সামারি (Summary)",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.summaryTitle,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 15),
                 Row(
                   children: [
                     _buildSummaryCard(
-                      "গড় উপস্থিতি",
+                      l10n.averageAttendance,
                       "${attendanceRate.toStringAsFixed(0)}%",
                       Colors.green,
                     ),
                     const SizedBox(width: 15),
                     _buildSummaryCard(
-                      "গড় লেট",
+                      l10n.averageLate,
                       "${lateRate.toStringAsFixed(0)}%",
                       Colors.orange,
                     ),
@@ -278,64 +285,47 @@ class AttendanceReportScreen extends StatelessWidget {
                 const SizedBox(height: 30),
 
                 // বিস্তারিত রিপোর্ট এরিয়া
-                const Text(
-                  "বিস্তারিত রিপোর্ট",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.detailedReportTitle,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 15),
 
                 _buildReportListItem(
-                  "মোট ট্র্যাকড দিন",
-                  "$totalDays দিন",
+                  l10n.totalTrackedDays,
+                  l10n.daysFormat(totalDays),
                   Icons.calendar_today_outlined,
                   Colors.blue,
                 ),
                 _buildReportListItem(
-                  "সময়মতো উপস্থিতি",
-                  "$totalPresent দিন",
+                  l10n.onTimeAttendance,
+                  l10n.daysFormat(totalPresent),
                   Icons.timer_outlined,
                   Colors.green,
                 ),
                 _buildReportListItem(
-                  "দেরিতে উপস্থিতি",
-                  "$totalLate দিন",
+                  l10n.lateAttendance,
+                  l10n.daysFormat(totalLate),
                   Icons.history_toggle_off,
                   Colors.orange,
                 ),
                 _buildReportListItem(
-                  "ছুটি (Leave)",
-                  "$totalLeave দিন",
+                  l10n.leaveDays,
+                  l10n.daysFormat(totalLeave),
                   Icons.beach_access_outlined,
                   Colors.purple,
                 ),
                 _buildReportListItem(
-                  "অনুপস্থিতি",
-                  "$totalAbsent দিন",
+                  l10n.absentDays,
+                  l10n.daysFormat(totalAbsent),
                   Icons.person_off_outlined,
                   Colors.red,
                 ),
 
                 const SizedBox(height: 30),
-
-                // পিডিএফ ডাউনলোড বাটন
-                // SizedBox(
-                //   width: double.infinity,
-                //   height: 55,
-                //   child: ElevatedButton.icon(
-                //     onPressed: () {},
-                //     icon: const Icon(Icons.download, color: Colors.white),
-                //     label: const Text(
-                //       "পিডিএফ (PDF) ডাউনলোড করুন",
-                //       style: TextStyle(color: Colors.white, fontSize: 16),
-                //     ),
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: primaryColor,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(12),
-                //       ),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           );

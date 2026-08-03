@@ -3,7 +3,6 @@ import 'package:atten_fi/presentation/screens/dashboard/admin_dashboard.dart';
 import 'package:atten_fi/presentation/screens/role_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../User/dashboard/user_dashboard.dart';
 
 class SplashScreen extends StatelessWidget {

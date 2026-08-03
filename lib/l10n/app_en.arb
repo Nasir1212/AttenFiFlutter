@@ -1,0 +1,508 @@
+{
+  "generalSettings": "General Settings",
+  "settings": "Settings",
+  "appLanguage": "App Language",
+  "selectLanguage": "Select Language",
+  "other": "Other",
+  "holidaySettings": "Holiday Settings",
+  "changePassword": "Change Password",
+  "version": "Version",
+
+  "@@locale": "en",
+  "appName": "AttenFI",
+  "adminManager": "Admin/Manager",
+  "logoutConfirmTitle": "Confirm Logout",
+  "logoutConfirmMessage": "Are you sure you want to log out of your account?",
+  "no": "No",
+  "yes": "Yes",
+  "logOutTooltip": "Log Out",
+  "todayStats": "Today's Statistics",
+  "totalEmployee": "Total Employee",
+  "present": "Present",
+  "absent": "Absent",
+  "late": "Late",
+  "quickActions": "Quick Actions",
+  "staff": "Staff",
+  "router": "Router",
+  "report": "Report",
+  "office": "Office",
+  "holiday": "Holiday",
+  "otp": "OTP",
+  "settings": "Settings",
+  "recentAttendance": "Recent Attendance",
+  "seeAll": "See All",
+  "noAttendanceLogs": "No attendance logs for today yet.",
+  "timeFormat": "Time: {time}",
+  "@timeFormat": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "onTime": "On Time",
+  "unknown": "Unknown",
+
+  "addEmployeeTitle": "Add New Employee",
+  "employeeName": "Employee Name",
+  "fatherName": "Father's Name",
+  "motherName": "Mother's Name",
+  "nidNumber": "NID Number",
+  "dateOfBirth": "Date of Birth",
+  "dobHint": "DD/MM/YYYY",
+  "mobileNumber": "Mobile Number",
+  "fullAddress": "Full Address",
+  "saveInformation": "Save Information",
+  "validationRequiredFields": "* Name, mobile, and address are required",
+  "sessionExpiredMessage": "Session expired! Please login again.",
+  "employeeAddedSuccess": "Employee added successfully",
+  "employeeDetailsTitle": "Employee Details",
+  "employeeRole": "Employee",
+  "institutionalInfo": "Institutional Information",
+  "employeeId": "Employee ID",
+  "idNotFound": "ID not found",
+  "personalInfo": "Personal Information",
+  "notSpecified": "Not specified",
+  "contactInfo": "Contact Information",
+  "editInformation": "Edit Information",
+  "editEmployeeTitle": "Edit Information",
+  "selectFromGallery": "Select from Gallery",
+  "takePhotoWithCamera": "Take photo with camera",
+  "nameRequired":"Name is mandatory",
+  "mobileRequired":"Mobile is mandatory",
+  "employeeIdLabel": "Employee ID: {id}",
+  "@employeeIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "updateButton": "Update",
+  "updateSuccess": "Successfully updated",
+  "tryAgain": "Please try again",
+
+  "confirmTitle": "Confirm",
+  "deleteEmployeeConfirmation": "Are you sure you want to delete '{employeeName}' from the list?",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "deletedSuccessfully": "Deleted successfully",
+  "tryAgain": "Please try again!",
+  "allEmployeesList": "All Employees List",
+  "noEmployeeDataFound": "No employee data found.",
+  "searchHint": "Search by name or ID...",
+  "notFound": "Not found!",
+  "image": "Image",
+  "details": "Details",
+  "action": "Action",
+  "noId": "No ID",
+  "addEmployee": "Add Employee",
+
+
+
+  "holidayUploadCalendarTitle": "Holiday Upload Screen",
+  "singleDayGuidance": "👉 Single day holiday: Select any date and press the button below.",
+  "multiDayGuidance": "👉 Multiple days holiday: Select start and end dates and press the button below.",
+  "addSingleDayHolidayTitle": "Add 1 Day Holiday",
+  "addMultiDayHolidayTitle": "Add Consecutive Holidays",
+  "singleDateText": "Date: {date}",
+  "@singleDateText": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "dateRangeText": "Duration: {start} to {end}",
+  "@dateRangeText": {
+    "placeholders": {
+      "start": {
+        "type": "Object"
+      },
+      "end": {
+        "type": "Object"
+      }
+    }
+  },
+  "holidayTitleHint": "e.g., Eid Holiday, Independence Day",
+  "holidayTitleLabel": "Holiday or Event Name",
+  "cancel": "Cancel",
+  "save": "Save",
+  "addHoliday": "Add Holiday",
+  "addConsecutiveHoliday": "Add Consecutive Holidays",
+  "holidayAddedSuccessfully": "\"{title}\" added successfully! 🎉",
+  "@holidayAddedSuccessfully": {
+    "placeholders": {
+      "title": {
+        "type": "Object"
+      }
+    }
+  },
+
+  "addOfficeTitle": "Add New Office",
+  "officeNameLabel": "Office/Branch Name",
+  "officeNameHint": "e.g., Chittagong Branch, GEC",
+  "officeNameRequired": "Office name is required",
+  "officeAddressLabel": "Office Address",
+  "officeAddressHint": "e.g., Road #2, House #45, OR Nizam Road",
+  "officeAddressRequired": "Office address is required",
+  "officeStartTimeLabel": "Office Start Time",
+  "officeStartTimeHint": "e.g., 09:00:00",
+  "officeStartTimeRequired": "Office start time is required",
+  "lateTrackingLabel": "Late Tracking Time (Minutes)?",
+  "lateTrackingHint": "e.g., 09:15:00",
+  "lateTrackingRequired": "Late tracking time is required",
+  "officeEndTimeLabel": "Office End Time",
+  "officeEndTimeHint": "17:00:00",
+  "officeEndTimeRequired": "Office end time is required",
+  "saveOfficeButton": "Save Office",
+  "officeAddedSuccess": "New office added successfully!",
+  "officeAddError": "Failed to add office",
+  "routerSetSuccess": "Router successfully set for the office!",
+  "routerSetFailed": "Failed to set router",
+  "edit": "Edit",
+  "delete": "Delete",
+  "setRouter": "Set Router",
+  "routerList": "Router List",
+  "noAddress": "No address provided",
+  "startTime": "Start",
+  "lateTracking": "Late Tracking",
+  "endTime": "End",
+  "noOfficeAdded": "No office added!",
+  "noRouterSetup": "No router setup for this office!",
+  "addNewWifi": "Add New Wi-Fi",
+  "setRouterForOffice": "Set Router for {officeName}",
+  "@setRouterForOffice": {
+    "placeholders": {
+      "officeName": {
+        "type": "String"
+      }
+    }
+  },
+  "noRouterSetup": "No router setup for this office!",
+  "addNewWifi": "Add New Wi-Fi",
+  "configuredRoutersForOffice": "Configured Routers - {officeName}",
+  "@configuredRoutersForOffice": {
+    "placeholders": {
+      "officeName": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmationTitle": "Confirmation",
+  "deleteOfficeConfirmation": "Are you sure you want to delete '{officeName}'? All associated Wi-Fi data may also be deleted.",
+  "@deleteOfficeConfirmation": {
+    "placeholders": {
+      "officeName": {
+        "type": "String"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "delete": "Yes, Delete",
+  "officeDeleteSuccess": "Office deleted successfully",
+  "officeDeleteFailed": "Failed to delete office",
+  "editOfficeTitle": "Edit Office Info",
+  "officeNameLabel": "Office Name",
+  "officeNameHint": "e.g., Head Office",
+  "officeNameRequired": "Name is required",
+  "officeAddressLabel": "Office Address",
+  "officeAddressHint": "e.g., Agrabad, Chattogram",
+  "officeAddressRequired": "Address is required",
+  "startTimeLabel": "Office Start Time",
+  "startTimeHint": "e.g., 09:00:00",
+  "startTimeRequired": "Start time is required",
+  "lateTrackingLabel": "Late Tracking (Minutes)",
+  "lateTrackingHint": "e.g., 09:15:00",
+  "lateTrackingRequired": "Late tracking time is required",
+  "endTimeLabel": "Office End Time",
+  "endTimeHint": "17:00:00",
+  "endTimeRequired": "End time is required",
+  "updateInfoButton": "Update Info",
+  "officeUpdateSuccess": "Office updated successfully!",
+  "officeUpdateFailed": "Failed to update office",
+  "routerRemovedSuccess": "Router removed successfully",
+  "officeListTitle": "List of Offices",
+  "attendanceReportTitle": "Attendance Report",
+  "employeeReportTitle": "{name} - Report",
+  "@employeeReportTitle": {
+    "placeholders": {
+      "name": {
+     
+      }
+    }
+  },
+  "january": "January",
+  "february": "February",
+  "march": "March",
+  "april": "April",
+  "may": "May",
+  "june": "June",
+  "july": "July",
+  "august": "August",
+  "september": "September",
+  "october": "October",
+  "novembar": "November",
+  "december": "December",
+  "cancel": "Cancel",
+  "reportPeriodLabel": "Report Period (Month/Year)",
+  "loading": "Loading...",
+  "summaryTitle": "Summary",
+  "averageAttendance": "Avg. Attendance",
+  "averageLate": "Avg. Late",
+  "detailedReportTitle": "Detailed Report",
+  "totalTrackedDays": "Total Tracked Days",
+  "onTimeAttendance": "On-time Attendance",
+  "lateAttendance": "Late Attendance",
+  "leaveDays": "Leave",
+  "absentDays": "Absence",
+  "daysFormat": "{count} Days",
+  "@daysFormat": {
+    "placeholders": {
+      "count": {
+       
+      }
+    }
+  },
+  "downloadPdf": "Download PDF",
+  "employeeReportListTitle": "Employee Report List",
+  "loadingText": "Loading...",
+  "monthlyReportFormat": "Report for {monthYear}",
+  "@monthlyReportFormat": {
+    "placeholders": {
+      "monthYear": {
+        "type": "String"
+      }
+    }
+  },
+  "totalEmployeesFormat": "Total Employees: {count}",
+  "@totalEmployeesFormat": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "noDataFound": "No data found",
+  "tableColumnId": "ID",
+  "tableColumnName": "Name",
+  "tableColumnAttendance": "Attendance",
+  "tableColumnLate": "Late",
+  "tableColumnPercentage": "Percentage",
+  "tableColumnAction": "Action",
+  "routerListTitle": "Router List",
+  "deleteConfirmationTitle": "Confirmation",
+  "deleteRouterConfirmMessage": "Are you sure you want to delete '{ssid}' router?",
+  "@deleteRouterConfirmMessage": {
+    "placeholders": {
+      "ssid": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelButton": "Cancel",
+  "deleteButton": "Yes, Delete",
+  "officeDeletedSuccess": "Office deleted successfully",
+  "deleteFailed": "Failed to delete",
+  "noRouterSetupText": "No router setup found!",
+  "setupNowButton": "Setup Now",
+  "bssidLabel": "BSSID: {bssid}",
+  "@bssidLabel": {
+    "placeholders": {
+      "bssid": {
+        "type": "String"
+      }
+    }
+  },
+  "officeWifiSetupTitle": "Office Wi-Fi Setup",
+  "globalWifiSetupTitle": "Global Wi-Fi Setup",
+  "wifiAutoSyncedSuccess": "Current Wi-Fi info auto-synced!",
+  "locationPermissionRequiredWifi": "Location permission required to auto-sync Wi-Fi info.",
+  "wifiSaveSuccess": "Wi-Fi saved successfully!",
+  "wifiSaveFailed": "Failed to save Wi-Fi info",
+  "configureOfficeWifiTitle": "Configure Office Wi-Fi",
+  "configureOfficeWifiSubtitle": "Employees cannot mark attendance without connecting to the correct Wi-Fi.",
+  "wifiNameLabel": "Wi-Fi Name (SSID)",
+  "wifiNameHint": "e.g. Office_Guest_WiFi",
+  "wifiNameRequired": "Wi-Fi name is required",
+  "routerBssidLabel": "Router ID (BSSID)",
+  "routerBssidHint": "e.g. 00:0a:95:9d:68:16",
+  "routerBssidRequired": "Router MAC/BSSID is required",
+  "saveButton": "Save",
+  "welcomeTitle": "Welcome to AttenFI",
+  "selectAccountTypeSubtitle": "Select your account type to continue",
+  "adminRoleTitle": "Admin/Manager",
+  "adminRoleSubtitle": "To manage employee attendance",
+  "employeeRoleTitle": "Employee",
+  "employeeRoleSubtitle": "To mark your attendance as an employee",
+  "securePlatformText": "Secure & Encrypted Platform",
+  "adminLoginSubtitle": "Login to Admin Panel",
+  "emailLabel": "Email",
+  "emailHint": "Email Address",
+  "passwordLabel": "Password",
+  "passwordHint": "Enter Password",
+  "loginButton": "Login",
+  "noAccountText": " Don't have an account? ",
+  "createAccountText": "Create Account",
+  "fillEmailAndPasswordValidation": "Please fill in both email and password",
+  "registerTitle": "Register",
+  "ownerNameLabel": "Owner Name",
+  "companyNameLabel": "Company Name",
+  "employeeRangeLabel": "Employee Range",
+  "emailAddressLabel": "Email Address",
+  "phoneNumberLabel": "Phone Number",
+  "passwordLabelText": "Password",
+  "confirmPasswordLabel": "Confirm Password",
+  "completeRegistrationButton": "Complete Registration",
+  "fillAllFieldsValidation": "Please fill in all information correctly",
+  "passwordsDoNotMatchValidation": "Passwords do not match!",
+  "range1To10": "1-10 Employees",
+  "range11To50": "11-50 Employees",
+  "range51To100": "51-100 Employees",
+  "range100Plus": "100+ Employees",
+  "permissionRequiredTitle": "Permission Required",
+  "gpsDisabledMessage": "GPS/Location Service is disabled on your phone. Please turn it on.",
+  "locationPermanentlyBlockedMessage": "You have permanently denied location permission. Please enable it from settings to log in.",
+  "locationPermissionRequiredMessage": "Location permission is mandatory for Wi-Fi verification.",
+  "cancelButton": "Cancel",
+  "okButton": "OK",
+  "openSettingsButton": "Open Settings",
+  "tryAgainButton": "Try Again",
+  "provideEmployeeIdError": "Please enter your employee ID",
+  "otpSentSuccess": "OTP has been sent to your registered number",
+  "otpSendError": "Failed to send OTP: {error}",
+  "enterValidOtpError": "Please enter a valid OTP code",
+  "verificationFailedError": "Verification failed: {error}",
+  "employeeLoginTitle": "Employee Login",
+  "enterOtpSubtitle": "Enter the OTP code received on your mobile below",
+  "enterIdSubtitle": "Log in with your unique employee ID",
+  "employeeIdHint": "Employee ID (e.g., 001100)",
+  "otpCodeHint": "4 or 6 digit OTP code",
+  "verifyAndLoginButton": "Verify & Login",
+  "sendOtpButton": "Send OTP",
+  "changeIdButton": "Wrong ID? Change here",
+  "logoutConfirmTitle": "Confirm Logout",
+  "logoutConfirmMessage": "Are you sure you want to log out from your account?",
+  "noButton": "No",
+  "yesLogoutButton": "Yes, Logout",
+  "logoutError": "Failed to log out. Please try again.",
+  "userDashboardTitle": "User Dashboard",
+  "personalTrackingSection": "Personal Tracking",
+  "myProfileMenu": "My Profile",
+  "attendanceHistoryMenu": "Attendance History",
+  "applicationsSection": "Applications & Requests",
+  "leaveApplicationMenu": "Leave Application",
+  "lateCondonationMenu": "Late Condonation Request",
+  "othersSection": "Others",
+  "companyPolicyMenu": "Company Policy",
+  "helpAndSupportMenu": "Help & Support",
+  "logoutMenu": "Logout",
+  "appVersion": "Version 1.0.0",
+  "navHome": "Home",
+  "navHistory": "History",
+  "navProfile": "Profile",
+  "defaultEmployeeName": "Known Employee",
+  "idLabel": "ID: {id}",
+  "@idLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyReportTitle": "This Month's Report ({monthYear})",
+  "@monthlyReportTitle": {
+    "placeholders": {
+      "monthYear": {
+        "type": "String"
+      }
+    }
+  },
+  "statPresent": "✅ Present",
+  "statLate": "⚠️ Late",
+  "statLeave": "❌ Leave",
+  "daysCount": "{count} days",
+  "@daysCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "latestNotice": "Latest Notice",
+  "noticeContent": "All-team weekly meeting will be held today at 4 PM.",
+  "sessionExpired": "Login session has expired!",
+  "holdToCheckIn": "Hold to Check-In",
+  "holdToCheckOut": "Hold to Check-Out",
+  "processingWait": "Processing, please wait...",
+  "checkInUpper": "CHECK-IN",
+  "checkOutUpper": "CHECK-OUT",
+  "todayLogsTitle": "Today's Logs",
+  "noAttendanceToday": "No attendance marked today",
+  "aths_attendanceHistoryTitle": "Attendance History",
+  "aths_selectMonthTitle": "Select Month",
+  "aths_navHome": "Home",
+  "aths_navHistory": "History",
+  "aths_navProfile": "Profile",
+  "aths_summaryPresent": "✅ Present",
+  "aths_summaryLate": "⚠️ Late",
+  "aths_summaryLeave": "❌ Leave",
+  "aths_daysFormat": "{count} Days",
+  "@aths_daysFormat": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "aths_filterAll": "All Days",
+  "aths_filterPresent": "Present",
+  "aths_filterLate": "Late",
+  "aths_filterLeave": "Leave",
+  "aths_noAttendanceRecord": "No attendance records found in this category.",
+  "aths_statusPresent": "Present",
+  "aths_statusLate": "Late",
+  "aths_statusLeave": "Leave",
+  "aths_inTime": "In Time",
+  "aths_outTime": "Out Time",
+  "aths_monthJan": "January",
+  "aths_monthFeb": "February",
+  "aths_monthMar": "March",
+  "aths_monthApr": "April",
+  "aths_monthMay": "May",
+  "aths_monthJun": "June",
+  "aths_monthJul": "July",
+  "aths_monthAug": "August",
+  "aths_monthSep": "September",
+  "aths_monthOct": "October",
+  "aths_monthNov": "November",
+  "aths_monthDec": "December",
+  "eps_profile_title": "My Profile",
+  "eps_nav_home": "Home",
+  "eps_nav_history": "History",
+  "eps_nav_profile": "Profile",
+  "eps_default_name": "Employee",
+  "eps_id_label": "ID: {id}",
+  "@eps_id_label": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "eps_not_available": "N/A",
+  "eps_no_info": "No Info",
+  "eps_mobile_not_found": "Mobile number not found",
+  "eps_address_not_found": "Address not found",
+  "eps_label_mobile": "Mobile Number",
+  "eps_label_nid": "NID Number",
+  "eps_label_dob": "Date of Birth",
+  "eps_label_father_name": "Father's Name",
+  "eps_label_mother_name": "Mother's Name",
+  "eps_label_address": "Current Address",
+  "cab_ad_load_error": "Failed to load advertisement",
+  "cab_ad_badge": "Ad",
+  "cab_admob_placeholder": "Google AdMob will show here",
+  "cab_contact_for_ads": "Contact for Advertisements",
+  "cab_ad_email": "adds@AttenFi.live"
+}

@@ -23,14 +23,18 @@ import 'package:atten_fi/presentation/screens/wifi/wifi_list.dart';
 import 'package:atten_fi/presentation/screens/wifi/wifi_setup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'core/providers/settings_provider.dart';
+import 'core/providers/language_provider.dart';
 import 'core/theme/app_themes.dart';
 import 'core/providers/attendance_provider.dart';
 import 'core/providers/employee_provider.dart';
+import 'l10n/app_localizations.dart';
 import 'presentation/screens/User/dashboard/user_dashboard.dart';
 import 'presentation/screens/auth/auth_screen.dart';
 import 'presentation/screens/auth/splash_screen.dart';
+import 'presentation/screens/settings/settingsholly.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,6 +60,9 @@ void main() {
           ChangeNotifierProvider(create: (_) => AdminReportProvider()),
           ChangeNotifierProvider(create: (_) => AdminEmployeeReportProvider()),
           ChangeNotifierProvider(create: (_) => AdminOtpProvider()),
+          ChangeNotifierProvider(
+            create: (_) => LanguageProvider(),
+          ), // 👈 ৪. MultiProvider-এ যুক্ত করা হলো
         ],
         child: const AttenFiAdmin(),
       ),
@@ -69,20 +76,32 @@ class AttenFiAdmin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentRole = context.watch<AuthProvider>().currentRole;
+    // 🔑 ৫. ল্যাঙ্গুয়েজ প্রোভাইডার থেকে কারেন্ট লোকাল রিসিভ করা হচ্ছে
+    final languageProvider = Provider.of<LanguageProvider>(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'AttenFI',
+
+      // 🌐 ৬. ভাষা কনফিগারেশন সেটআপ
+      locale: languageProvider.currentLocale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('bn'), // বাংলা
+        Locale('en'), // ইংরেজি
+      ],
 
       theme: currentRole == 'admin'
           ? AppThemes.adminTheme
           : AppThemes.userTheme,
 
-      // আপনার প্রথম স্ক্রিন (লগইন/রেজিস্ট্রেশন)
-      //home: AuthScreen(),
       home: const SplashScreen(),
 
-      // রাউটিং ম্যানেজমেন্ট (ভবিষ্যতের জন্য)
-      // initialRoute: '/login',
       routes: {
         '/login': (context) => AuthScreen(),
         '/dashboard': (context) => const AdminDashboard(),
@@ -98,6 +117,7 @@ class AttenFiAdmin extends StatelessWidget {
         '/office-add': (context) => OfficeAddScreen(),
         '/office-list': (context) => OfficeListScreen(),
         '/settings': (context) => SettingsScreen(),
+        '/settings-holly': (context) => Settingsholly(),
         '/holiday': (context) => HolidayUploadCalendarScreen(),
         '/employee_profile': (context) => EmployeeProfileScreen(),
         '/attendance_history': (context) => AttendanceHistoryScreen(),

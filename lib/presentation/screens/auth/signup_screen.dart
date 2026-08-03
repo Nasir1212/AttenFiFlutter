@@ -5,30 +5,53 @@ import 'package:atten_fi/presentation/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/model/user_model.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/select.dart';
 
-class SignupScreen extends StatelessWidget {
-  SignupScreen({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
-  final List<String> _employeeRanges = [
-    "১-১০ জন",
-    "১১-৫০ জন",
-    "৫১-১০০ জন",
-    "১০০+ জন",
-  ];
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
 
-  final Map<String, TextEditingController> _controllers = {
-    'owner': TextEditingController(),
-    'org': TextEditingController(),
-    'email': TextEditingController(),
-    'phone': TextEditingController(),
-    'pass': TextEditingController(),
-    'con_pass': TextEditingController(),
-  };
+class _SignupScreenState extends State<SignupScreen> {
+  // কন্ট্রোলারগুলোকে State ক্লাসের প্রোপার্টি হিসেবে রাখা হলো
+  late final Map<String, TextEditingController> _controllers;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = {
+      'owner': TextEditingController(),
+      'org': TextEditingController(),
+      'email': TextEditingController(),
+      'phone': TextEditingController(),
+      'pass': TextEditingController(),
+      'con_pass': TextEditingController(),
+    };
+  }
+
+  // মেমোরি লিক রোধ করতে dispose করা জরুরি
+  @override
+  void dispose() {
+    for (var controller in _controllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
+    final l10n = AppLocalizations.of(context)!;
+
+    final List<String> employeeRanges = [
+      l10n.range1To10,
+      l10n.range11To50,
+      l10n.range51To100,
+      l10n.range100Plus,
+    ];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -46,9 +69,9 @@ class SignupScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             child: Column(
               children: [
-                const Text(
-                  "নিবন্ধন করুন",
-                  style: TextStyle(
+                Text(
+                  l10n.registerTitle,
+                  style: const TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1A237E),
@@ -59,7 +82,7 @@ class SignupScreen extends StatelessWidget {
                 // ১. মালিকের নাম
                 InputField(
                   controller: _controllers['owner']!,
-                  label: "মালিকের নাম / Owner Name", // এখানে লেবেল যোগ হয়েছে
+                  label: l10n.ownerNameLabel,
                   icon: Icons.person_outline,
                 ),
                 const SizedBox(height: 20),
@@ -67,17 +90,16 @@ class SignupScreen extends StatelessWidget {
                 // ২. প্রতিষ্ঠানের নাম
                 InputField(
                   controller: _controllers['org']!,
-                  label: "প্রতিষ্ঠানের নাম / Company Name",
+                  label: l10n.companyNameLabel,
                   icon: Icons.business_outlined,
                 ),
                 const SizedBox(height: 20),
 
                 // ৩. কতজন কর্মচারী (Dropdown)
-                // আপনার স্ক্রিনের Column-এর ভেতর:
                 Select(
-                  label: "কতজন কর্মচারী / Employee Range",
+                  label: l10n.employeeRangeLabel,
                   icon: Icons.groups_outlined,
-                  items: _employeeRanges,
+                  items: employeeRanges,
                   value: authProvider.selectedRange,
                   onChanged: (val) {
                     authProvider.setSelectedRange(val);
@@ -88,7 +110,7 @@ class SignupScreen extends StatelessWidget {
                 // ৪. ইমেইল
                 InputField(
                   controller: _controllers['email']!,
-                  label: "ইমেইল অ্যাড্রেস / Email Address",
+                  label: l10n.emailAddressLabel,
                   icon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -97,24 +119,24 @@ class SignupScreen extends StatelessWidget {
                 // ৫. ফোন নম্বর
                 InputField(
                   controller: _controllers['phone']!,
-                  label: "ফোন নম্বর / Phone Number",
+                  label: l10n.phoneNumberLabel,
                   icon: Icons.phone_android_outlined,
                   keyboardType: TextInputType.phone,
                 ),
                 const SizedBox(height: 20),
 
-                // ৬. পাসওয়ার্ড
+                // ৬. পাসওয়ার্ড
                 InputField(
                   controller: _controllers['pass']!,
-                  label: "পাসওয়ার্ড / Password",
+                  label: l10n.passwordLabelText,
                   icon: Icons.lock_outline,
                   isPassword: true,
                 ),
-
                 const SizedBox(height: 20),
+
                 InputField(
                   controller: _controllers['con_pass']!,
-                  label: "কনর্ফাম পাসওয়ার্ড / Confirom Password",
+                  label: l10n.confirmPasswordLabel,
                   icon: Icons.lock_outline,
                   isPassword: true,
                 ),
@@ -124,7 +146,7 @@ class SignupScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 55,
                   child: PrimaryButton(
-                    label: 'নিবন্ধন সম্পন্ন করুন',
+                    label: l10n.completeRegistrationButton,
                     icon: Icons.save,
                     isLoading: authProvider.isLoading,
                     onPressed: () => _handleSignup(context, authProvider),
@@ -139,9 +161,9 @@ class SignupScreen extends StatelessWidget {
     );
   }
 
-  // সাইনআপ প্রসেস এবং ভ্যালিডেশন লজিক
   void _handleSignup(BuildContext context, AuthProvider authProvider) async {
-    // ১. খালি ফিল্ড ভ্যালিডেশন
+    final l10n = AppLocalizations.of(context)!;
+
     if (_controllers['owner']!.text.isEmpty ||
         _controllers['email']!.text.isEmpty ||
         _controllers['org']!.text.isEmpty ||
@@ -150,25 +172,23 @@ class SignupScreen extends StatelessWidget {
         authProvider.selectedRange == null) {
       CustomSnackBar.show(
         context,
-        message: "সবগুলো তথ্য সঠিকভাবে পূরণ করুন",
-        isSuccess: false, // এরর কালার দেখাবে
+        message: l10n.fillAllFieldsValidation,
+        isSuccess: false,
         icon: Icons.error_outline,
       );
       return;
     }
 
-    // ২. পাসওয়ার্ড ম্যাচিং ভ্যালিডেশন
     if (_controllers['pass']!.text != _controllers['con_pass']!.text) {
       CustomSnackBar.show(
         context,
-        message: "পাসওয়ার্ড দুটি মিলছে না!",
-        isSuccess: false, // এরর কালার দেখাবে
+        message: l10n.passwordsDoNotMatchValidation,
+        isSuccess: false,
         icon: Icons.error_outline,
       );
       return;
     }
 
-    // ৩. মডেল অবজেক্ট তৈরি (সব ডেটা মডেলে পুশ করা হচ্ছে)
     final userPayload = UserModel(
       ownerName: _controllers['owner']!.text.trim(),
       companyName: _controllers['org']!.text.trim(),
@@ -178,27 +198,22 @@ class SignupScreen extends StatelessWidget {
       password: _controllers['pass']!.text,
     );
 
-    // ৪. প্রোভাইডারের মাধ্যমে এপিআই-তে মডেল পাঠানো
     final result = await authProvider.registerUser(userPayload);
 
-    // ৫. রেসপন্স অনুযায়ী UI অ্যাকশন
     if (context.mounted) {
       if (result['success'] == true) {
         CustomSnackBar.show(
           context,
           message: result['message'],
-          isSuccess: true, // এরর কালার দেখাবে
+          isSuccess: true,
           icon: Icons.check_circle_outline,
         );
-        Navigator.pushReplacementNamed(
-          context,
-          '/login',
-        ); // সফল হলে লগইন পেজে রিডাইরেক্ট
+        Navigator.pushReplacementNamed(context, '/login');
       } else {
         CustomSnackBar.show(
           context,
           message: result['message'],
-          isSuccess: false, // এরর কালার দেখাবে
+          isSuccess: false,
           icon: Icons.gpp_bad_outlined,
         );
       }

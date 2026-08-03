@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/custom_ad_bottom_bar.dart';
 import '../../widgets/custom_snackbar.dart';
 
@@ -25,7 +26,6 @@ class EmployeeEditScreen extends StatelessWidget {
   final TextEditingController _addressController = TextEditingController();
 
   final ValueNotifier<File?> _imageNotifier = ValueNotifier<File?>(null);
-
   final ValueNotifier<String> _dobNotifier = ValueNotifier<String>('');
 
   Future<void> _pickImage(ImageSource source) async {
@@ -45,6 +45,7 @@ class EmployeeEditScreen extends StatelessWidget {
   }
 
   void _showImageSourceBottomSheet(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -58,7 +59,7 @@ class EmployeeEditScreen extends StatelessWidget {
                 Icons.photo_library,
                 color: AppColors.primary,
               ),
-              title: const Text('গ্যালারি থেকে সিলেক্ট করুন'),
+              title: Text(l10n.selectFromGallery),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.gallery);
@@ -66,7 +67,7 @@ class EmployeeEditScreen extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt, color: AppColors.primary),
-              title: const Text('ক্যামেরা দিয়ে ছবি তুলুন'),
+              title: Text(l10n.takePhotoWithCamera),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.camera);
@@ -110,17 +111,16 @@ class EmployeeEditScreen extends StatelessWidget {
     if (pickedDate != null) {
       String formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
       _dobController.text = formattedDate;
-      _dobNotifier.value = formattedDate; // 🌟 নোটিফায়ার আপডেট করা হলো
+      _dobNotifier.value = formattedDate;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final employee =
         ModalRoute.of(context)!.settings.arguments as EmployeeModel;
 
-    // 🌟 ট্রিক: কন্ট্রোলারের টেক্সট যদি খালি থাকে (অর্থাৎ স্ক্রিন প্রথমবার ওপেন হয়েছে), শুধু তখনই ডাটা অ্যাসাইন হবে।
-    // এর ফলে টাইপ বা ইমেজ পরিবর্তনের কারণে স্ক্রিন রি-বিল্ড হলেও আপনার ইনপুট করা নতুন ডাটা মুছে যাবে না।
     if (_nameController.text.isEmpty) {
       _nameController.text = employee.name;
       _mobileController.text = employee.mobile;
@@ -129,7 +129,7 @@ class EmployeeEditScreen extends StatelessWidget {
       _dobController.text = employee.dob ?? '';
       _nidController.text = employee.nid ?? '';
       _addressController.text = employee.address ?? '';
-      _dobNotifier.value = employee.dob ?? ''; // শুরুর ডেট সেট করা
+      _dobNotifier.value = employee.dob ?? '';
     }
 
     return Scaffold(
@@ -137,9 +137,9 @@ class EmployeeEditScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
-        title: const Text(
-          "তথ্য পরিবর্তন করুন",
-          style: TextStyle(
+        title: Text(
+          l10n.editEmployeeTitle,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -247,7 +247,7 @@ class EmployeeEditScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        "কর্মচারী আইডি: ${employee.employeeId}",
+                        l10n.employeeIdLabel(employee.employeeId!),
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Colors.black54,
@@ -262,39 +262,40 @@ class EmployeeEditScreen extends StatelessWidget {
 
               InputField(
                 controller: _nameController,
-                label: "কর্মচারীর নাম",
+                label: l10n.employeeName,
                 icon: Icons.person_outline,
-                validator: (val) =>
-                    val == null || val.trim().isEmpty ? "নাম আবশ্যক" : null,
+                validator: (val) => val == null || val.trim().isEmpty
+                    ? l10n.nameRequired
+                    : null,
               ),
               const SizedBox(height: 16),
 
               InputField(
                 controller: _mobileController,
-                label: "মোবাইল নম্বর",
+                label: l10n.mobileNumber,
                 icon: Icons.phone_android_outlined,
                 keyboardType: TextInputType.phone,
                 validator: (val) => val == null || val.trim().isEmpty
-                    ? "মোবাইল নম্বর আবশ্যক"
+                    ? l10n.mobileRequired
                     : null,
               ),
               const SizedBox(height: 16),
 
               InputField(
                 controller: _fatherNameController,
-                label: "পিতার নাম",
+                label: l10n.fatherName,
                 icon: Icons.person_search_outlined,
               ),
               const SizedBox(height: 16),
 
               InputField(
                 controller: _motherNameController,
-                label: "মাতার নাম",
+                label: l10n.motherName,
                 icon: Icons.person_search_outlined,
               ),
               const SizedBox(height: 16),
 
-              // 🌟 জন্ম তারিখ ফিল্ড (ValueListenableBuilder দিয়ে রেন্ডার অপ্টিমাইজ করা হলো)
+              // জন্ম তারিখ ফিল্ড
               ValueListenableBuilder<String>(
                 valueListenable: _dobNotifier,
                 builder: (context, dobValue, child) {
@@ -302,7 +303,7 @@ class EmployeeEditScreen extends StatelessWidget {
                     onTap: () => _selectDate(context, dobValue),
                     child: AbsorbPointer(
                       child: InputField(
-                        label: "জন্ম তারিখ",
+                        label: l10n.dateOfBirth,
                         controller: _dobController,
                         icon: Icons.calendar_today,
                         hint: "DD/MM/YYYY",
@@ -315,7 +316,7 @@ class EmployeeEditScreen extends StatelessWidget {
 
               InputField(
                 controller: _nidController,
-                label: "এন.আই.ডি (NID)",
+                label: l10n.nidNumber,
                 icon: Icons.credit_card_outlined,
                 keyboardType: TextInputType.number,
               ),
@@ -323,7 +324,7 @@ class EmployeeEditScreen extends StatelessWidget {
 
               InputField(
                 controller: _addressController,
-                label: "ঠিকানা",
+                label: l10n.fullAddress,
                 icon: Icons.home_outlined,
                 maxLines: 3,
               ),
@@ -341,9 +342,9 @@ class EmployeeEditScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    "হালনাগাদ করুন",
-                    style: TextStyle(
+                  child: Text(
+                    l10n.updateButton,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -364,6 +365,7 @@ class EmployeeEditScreen extends StatelessWidget {
     if (employeeId == null) return;
     if (!_formKey.currentState!.validate()) return;
 
+    final l10n = AppLocalizations.of(context)!;
     final String? userToken = context.read<AuthProvider>().token;
     if (userToken == null) return;
 
@@ -396,7 +398,7 @@ class EmployeeEditScreen extends StatelessWidget {
       if (context.mounted) {
         CustomSnackBar.show(
           context,
-          message: "আপডেট করা হয়েছে",
+          message: l10n.updateSuccess,
           isSuccess: true,
           icon: Icons.check_circle_outline,
         );
@@ -406,7 +408,7 @@ class EmployeeEditScreen extends StatelessWidget {
       if (context.mounted) {
         CustomSnackBar.show(
           context,
-          message: "আবার চেষ্ট করুন",
+          message: l10n.tryAgain,
           isSuccess: false,
           icon: Icons.error_outline,
         );

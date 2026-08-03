@@ -1,26 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../../core/providers/attendance_provider.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../widgets/bottom_navItem.dart';
 
 class AttendanceHistoryScreen extends StatelessWidget {
   const AttendanceHistoryScreen({super.key});
 
-  // 🔄 স্ক্রিন প্রথমবার ওপেন হওয়ার সময় টোকেন নিয়ে ডাটা লোড করার মেথড
   Future<void> _loadHistoryData(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final authToken = prefs.getString('auth_token');
 
     if (authToken != null && context.mounted) {
-      // সার্ভার থেকে চলতি মাসের হিস্ট্রি ডাটা ফেচ করা
       context.read<AttendanceProvider>().fetchAttendanceHistory(
         userToken: authToken,
       );
     }
   }
 
-  // 🗓️ শুধু গত ৩ মাসের নাম ও দিন ফিল্টার করার কাস্টম বটম শিট
+  String _getMonthName(BuildContext context, int month) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (month) {
+      case 1:
+        return l10n.aths_monthJan;
+      case 2:
+        return l10n.aths_monthFeb;
+      case 3:
+        return l10n.aths_monthMar;
+      case 4:
+        return l10n.aths_monthApr;
+      case 5:
+        return l10n.aths_monthMay;
+      case 6:
+        return l10n.aths_monthJun;
+      case 7:
+        return l10n.aths_monthJul;
+      case 8:
+        return l10n.aths_monthAug;
+      case 9:
+        return l10n.aths_monthSep;
+      case 10:
+        return l10n.aths_monthOct;
+      case 11:
+        return l10n.aths_monthNov;
+      case 12:
+        return l10n.aths_monthDec;
+      default:
+        return '';
+    }
+  }
+
   Future<void> _selectMonthYear(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final authToken = prefs.getString('auth_token');
@@ -29,30 +60,13 @@ class AttendanceHistoryScreen extends StatelessWidget {
 
     final now = DateTime.now();
 
-    // 🎯 গত ৩ মাসের ডাটা তৈরি করা (চলতি মাস, ১ মাস আগে, ২ মাস আগে)
     final List<DateTime> monthsList = List.generate(3, (index) {
       return DateTime(now.year, now.month - index, 1);
     });
 
-    // 🇧🇩 বাংলা মাসের নামের ম্যাপ
-    final Map<int, String> banglaMonths = {
-      1: 'জানুয়ারি',
-      2: 'ফেব্রুয়ারি',
-      3: 'মার্চ',
-      4: 'এপ্রিল',
-      5: 'মে',
-      6: 'জুন',
-      7: 'জুলাই',
-      8: 'আগস্ট',
-      9: 'সেপ্টেম্বর',
-      10: 'অক্টোবর',
-      11: 'নভেম্বর',
-      12: 'ডিসেম্বর',
-    };
-
     if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context)!;
 
-    // 🔝 সুন্দর একটি বটম শিট ওপেন হবে মাস সিলেক্ট করার জন্য
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -65,9 +79,9 @@ class AttendanceHistoryScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'মাস নির্বাচন করুন',
-                style: TextStyle(
+              Text(
+                l10n.aths_selectMonthTitle,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
@@ -80,7 +94,7 @@ class AttendanceHistoryScreen extends StatelessWidget {
                 itemCount: monthsList.length,
                 itemBuilder: (ctx, index) {
                   final monthDate = monthsList[index];
-                  final monthName = banglaMonths[monthDate.month] ?? '';
+                  final monthName = _getMonthName(context, monthDate.month);
 
                   return ListTile(
                     leading: const Icon(
@@ -88,7 +102,7 @@ class AttendanceHistoryScreen extends StatelessWidget {
                       color: Colors.blue,
                     ),
                     title: Text(
-                      monthName,
+                      '$monthName ${monthDate.year}',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -119,11 +133,11 @@ class AttendanceHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
     final accentColor = theme.colorScheme.secondary;
 
-    // 🚀 প্রথমবার বিল্ড হওয়ার সময় ডাটা লোড করার ট্রিগার
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadHistoryData(context);
     });
@@ -131,9 +145,9 @@ class AttendanceHistoryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'হাজিরা হিস্ট্রি',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        title: Text(
+          l10n.aths_attendanceHistoryTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         backgroundColor: Colors.white,
         foregroundColor: primaryColor,
@@ -145,7 +159,6 @@ class AttendanceHistoryScreen extends StatelessWidget {
           ),
         ],
       ),
-
       bottomNavigationBar: SafeArea(
         child: Container(
           height: 65,
@@ -166,7 +179,7 @@ class AttendanceHistoryScreen extends StatelessWidget {
             children: [
               BottomNavItem(
                 icon: Icons.home_rounded,
-                label: "হোম",
+                label: l10n.aths_navHome,
                 color: Colors.grey,
                 isActive: false,
                 onTap: () {
@@ -175,7 +188,7 @@ class AttendanceHistoryScreen extends StatelessWidget {
               ),
               BottomNavItem(
                 icon: Icons.history_rounded,
-                label: "হিস্ট্রি",
+                label: l10n.aths_navHistory,
                 color: primaryColor,
                 isActive: true,
                 onTap: () {
@@ -184,7 +197,7 @@ class AttendanceHistoryScreen extends StatelessWidget {
               ),
               BottomNavItem(
                 icon: Icons.person,
-                label: "প্রোফাইল",
+                label: l10n.aths_navProfile,
                 color: Colors.grey,
                 isActive: false,
                 onTap: () {
@@ -199,27 +212,24 @@ class AttendanceHistoryScreen extends StatelessWidget {
         builder: (context, provider, child) {
           final reportTitle = provider.currentMonthText;
 
-          // 💡 Column-কে বাইরে রেখে শুধু স্ক্রলযোগ্য কন্টেন্টকে RefreshIndicator-এর ভেতরে দেওয়া হয়েছে
           return Column(
             children: [
-              // ১. ওপরের মিনি সামারি কার্ড (স্থির থাকবে)
               _buildMiniSummarySection(
+                context: context,
                 reportTitle: reportTitle,
-                present: "${provider.totalPresentDays} দিন",
-                late: "${provider.totalLateDays} দিন",
-                leave: "${provider.totalLeaveDays} দিন",
+                present: l10n.aths_daysFormat(
+                  provider.totalPresentDays.toString(),
+                ),
+                late: l10n.aths_daysFormat(provider.totalLateDays.toString()),
+                leave: l10n.aths_daysFormat(provider.totalLeaveDays.toString()),
               ),
-
-              // ২. ফিল্টার চিপস সেকশন (স্থির থাকবে)
               _buildFilterSection(
+                context,
                 accentColor,
                 provider.selectedFilter,
                 provider,
               ),
-
               const SizedBox(height: 10),
-
-              // ৩. প্রধান হিস্ট্রি লিস্ট ভিউ (যা স্ক্রল হবে এবং টান দিলে রিফ্রেশ হবে)
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () async {
@@ -227,15 +237,9 @@ class AttendanceHistoryScreen extends StatelessWidget {
                     final authToken = prefs.getString('auth_token');
 
                     if (authToken != null && context.mounted) {
-                      // ডাটা রি-ফেচ করার এপিআই কল (ফিউচার কমপ্লিট হওয়া পর্যন্ত স্পিনার ঘুরবে)
                       await context
                           .read<AttendanceProvider>()
-                          .fetchAttendanceHistory(
-                            userToken: authToken,
-                            // প্রোভাইডারে যদি লাস্ট সিলেক্টেড মাস-বছর স্টোর করা থাকে তবে এভাবে পাঠাতে পারেন:
-                            // month: provider.selectedMonth,
-                            // year: provider.selectedYear,
-                          );
+                          .fetchAttendanceHistory(userToken: authToken);
                     }
                   },
                   child: provider.isLoading
@@ -245,16 +249,17 @@ class AttendanceHistoryScreen extends StatelessWidget {
                             final filteredLogs =
                                 provider.filteredAttendanceHistory;
 
-                            // ডাটা ফেস খালি থাকলেও যেন টান দিয়ে রিফ্রেশ করা যায়
                             if (filteredLogs.isEmpty) {
                               return ListView(
                                 physics: const AlwaysScrollableScrollPhysics(),
-                                children: const [
-                                  SizedBox(height: 100),
+                                children: [
+                                  const SizedBox(height: 100),
                                   Center(
                                     child: Text(
-                                      'এই ক্যাটাগরিতে কোনো হাজিরা রেকর্ড নেই।',
-                                      style: TextStyle(color: Colors.grey),
+                                      l10n.aths_noAttendanceRecord,
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -262,7 +267,6 @@ class AttendanceHistoryScreen extends StatelessWidget {
                             }
 
                             return ListView.builder(
-                              // ↕️ ডাটা স্ক্রিনের চেয়ে কম হলেও যেন সবসময় রিফ্রেশ কাজ করে
                               physics: const AlwaysScrollableScrollPhysics(),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -276,7 +280,7 @@ class AttendanceHistoryScreen extends StatelessWidget {
                                   (log['date'] ?? '') as String,
                                   (log['in'] ?? '--:--') as String,
                                   (log['out'] ?? '--:--') as String,
-                                  (log['hours'] ?? '০ ঘণ্টা') as String,
+                                  (log['hours'] ?? '') as String,
                                   (log['wifi'] ?? '-') as String,
                                   (log['isLate'] ?? false) as bool,
                                 );
@@ -293,13 +297,15 @@ class AttendanceHistoryScreen extends StatelessWidget {
     );
   }
 
-  // 📊 ১. মিনি সামারি উইজেট
   Widget _buildMiniSummarySection({
+    required BuildContext context,
     required String reportTitle,
     required String present,
     required String late,
     required String leave,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.all(16),
@@ -318,26 +324,29 @@ class AttendanceHistoryScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                reportTitle,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
+          Text(
+            reportTitle,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: Colors.black87,
+            ),
           ),
           const Divider(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildSummaryItem("✅ উপস্থিত", present, Colors.green),
-              _buildSummaryItem("⚠️ লেট", late, Colors.orange),
-              _buildSummaryItem("❌ ছুটি", leave, Colors.redAccent),
+              _buildSummaryItem(
+                l10n.aths_summaryPresent,
+                present,
+                Colors.green,
+              ),
+              _buildSummaryItem(l10n.aths_summaryLate, late, Colors.orange),
+              _buildSummaryItem(
+                l10n.aths_summaryLeave,
+                leave,
+                Colors.redAccent,
+              ),
             ],
           ),
         ],
@@ -362,13 +371,30 @@ class AttendanceHistoryScreen extends StatelessWidget {
     );
   }
 
-  // 🔍 ২. ফিল্টার সেকশন উইজেট
   Widget _buildFilterSection(
+    BuildContext context,
     Color accentColor,
     String currentFilter,
     AttendanceProvider provider,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     final List<String> filters = ['All', 'Present', 'Late', 'Leave'];
+
+    String getFilterLabel(String filter) {
+      switch (filter) {
+        case 'All':
+          return l10n.aths_filterAll;
+        case 'Present':
+          return l10n.aths_filterPresent;
+        case 'Late':
+          return l10n.aths_filterLate;
+        case 'Leave':
+          return l10n.aths_filterLeave;
+        default:
+          return filter;
+      }
+    }
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -378,15 +404,7 @@ class AttendanceHistoryScreen extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: ChoiceChip(
-              label: Text(
-                filter == 'All'
-                    ? 'সব দিন'
-                    : filter == 'Present'
-                    ? 'উপস্থিত'
-                    : filter == 'Late'
-                    ? 'লেট'
-                    : 'ছুটি',
-              ),
+              label: Text(getFilterLabel(filter)),
               selected: isSelected,
               selectedColor: accentColor.withOpacity(0.15),
               labelStyle: TextStyle(
@@ -410,7 +428,6 @@ class AttendanceHistoryScreen extends StatelessWidget {
     );
   }
 
-  // 📅 ৩. হিস্ট্রিカード উইজেট
   Widget _buildHistoryCard(
     BuildContext context,
     String status,
@@ -421,6 +438,7 @@ class AttendanceHistoryScreen extends StatelessWidget {
     String wifiName,
     bool isLate,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     Color statusColor;
     IconData statusIcon;
     String statusText;
@@ -429,17 +447,17 @@ class AttendanceHistoryScreen extends StatelessWidget {
       case "Present":
         statusColor = Colors.green;
         statusIcon = Icons.check_circle_rounded;
-        statusText = "Present";
+        statusText = l10n.aths_statusPresent;
         break;
       case "Late":
         statusColor = Colors.orange;
         statusIcon = Icons.warning_rounded;
-        statusText = "Late";
+        statusText = l10n.aths_statusLate;
         break;
       default:
         statusColor = Colors.redAccent;
         statusIcon = Icons.cancel_rounded;
-        statusText = "Leave";
+        statusText = l10n.aths_statusLeave;
     }
 
     return Container(
@@ -509,14 +527,14 @@ class AttendanceHistoryScreen extends StatelessWidget {
                   children: [
                     _buildTimeRow(
                       Icons.login_rounded,
-                      "ইন টাইম",
+                      l10n.aths_inTime,
                       checkIn,
                       isLate ? Colors.orange : Colors.grey[700]!,
                     ),
                     const SizedBox(height: 8),
                     _buildTimeRow(
                       Icons.logout_rounded,
-                      "আউট টাইম",
+                      l10n.aths_outTime,
                       checkOut,
                       Colors.grey[700]!,
                     ),
@@ -571,26 +589,21 @@ class AttendanceHistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeRow(
-    IconData icon,
-    String label,
-    String time,
-    Color timeColor,
-  ) {
+  Widget _buildTimeRow(IconData icon, String label, String time, Color color) {
     return Row(
       children: [
-        Icon(icon, size: 14, color: Colors.grey[400]),
+        Icon(icon, size: 14, color: color),
         const SizedBox(width: 6),
         Text(
-          "$label: ",
-          style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+          '$label: ',
+          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
         ),
         Text(
           time,
           style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: timeColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: color,
           ),
         ),
       ],

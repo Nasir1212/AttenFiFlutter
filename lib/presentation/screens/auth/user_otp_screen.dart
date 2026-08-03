@@ -2,32 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../User/dashboard/user_dashboard.dart';
 
-class UserOtpScreen extends StatelessWidget {
-  UserOtpScreen({super.key});
+class UserOtpScreen extends StatefulWidget {
+  const UserOtpScreen({super.key});
 
-  final TextEditingController _idController = TextEditingController();
-  final TextEditingController _otpController = TextEditingController();
+  @override
+  State<UserOtpScreen> createState() => _UserOtpScreenState();
+}
 
-  // 🛡️ পারমিশন ও জিপিএস চেক করার কমন মেথড (লোড এবং বাটন দুই জায়গাতেই কল হবে)
+class _UserOtpScreenState extends State<UserOtpScreen> {
+  late final TextEditingController _idController;
+  late final TextEditingController _otpController;
+
+  @override
+  void initState() {
+    super.initState();
+    _idController = TextEditingController();
+    _otpController = TextEditingController();
+
+    // স্ক্রিন লোড হওয়ার পর পারমিশন চেক
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _hasLocationAndGpsPermission(context);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _idController.dispose();
+    _otpController.dispose();
+    super.dispose();
+  }
+
+  // 🛡️ পারমিশন ও জিপিএস চেক করার কমন মেথড
   Future<bool> _hasLocationAndGpsPermission(BuildContext context) async {
-    // ১. প্রথমে লোকেশন পারমিশনের কারেন্ট স্ট্যাটাস দেখা
+    final l10n = AppLocalizations.of(context)!;
+
     var permissionStatus = await Permission.location.status;
 
     if (permissionStatus.isDenied) {
       permissionStatus = await Permission.location.request();
     }
 
-    // ২. ফোনের GPS/Location Service অন আছে কিনা চেক করা
     bool isGpsEnabled = await Permission.location.serviceStatus.isEnabled;
 
-    // 🟢 পারমিশন এবং জিপিএস দুটোই ওকে থাকলে true রিটার্ন করবে
     if (permissionStatus.isGranted && isGpsEnabled) {
       return true;
     }
 
-    // 🔴 অনুমতি না থাকলে বা জিপিএস বন্ধ থাকলে ডায়ালগ দেখাবে
     bool isPermanentlyBlocked = permissionStatus.isPermanentlyDenied;
 
     if (!context.mounted) return false;
@@ -36,33 +61,37 @@ class UserOtpScreen extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.amber),
-            SizedBox(width: 10),
-            Text('অনুমতি প্রয়োজন'),
+            const Icon(Icons.warning_amber_rounded, color: Colors.amber),
+            const SizedBox(width: 10),
+            Text(l10n.permissionRequiredTitle),
           ],
         ),
         content: Text(
           !isGpsEnabled
-              ? 'আপনার ফোনের GPS/Location Service বন্ধ আছে। দয়া করে এটি অন করুন।'
+              ? l10n.gpsDisabledMessage
               : isPermanentlyBlocked
-              ? 'আপনি লোকেশন পারমিশন স্থায়ীভাবে বন্ধ করেছেন। লগইন করতে ফোনের সেটিংস থেকে অনুমতি অন করুন।'
-              : 'ওয়াইফাই ভেরিফিকেশনের জন্য লোকেশন পারমিশন দেওয়া বাধ্যতামূলক।',
+              ? l10n.locationPermanentlyBlockedMessage
+              : l10n.locationPermissionRequiredMessage,
         ),
         actions: [
-          // ❌ বাতিল বাটন: জাস্ট ডায়ালগ বন্ধ করবে, ইউজার ওটিপি স্ক্রিনেই থাকবে (ব্যাক হবে না)
           TextButton(
             onPressed: () {
-              if (Navigator.canPop(dialogContext)) Navigator.pop(dialogContext);
+              if (Navigator.canPop(dialogContext)) {
+                Navigator.pop(dialogContext);
+              }
             },
-            child: const Text('বাতিল', style: TextStyle(color: Colors.grey)),
+            child: Text(
+              l10n.cancelButton,
+              style: const TextStyle(color: Colors.grey),
+            ),
           ),
-
-          // 🎯 মূল অ্যাকশন বাটন
           TextButton(
             onPressed: () async {
-              if (Navigator.canPop(dialogContext)) Navigator.pop(dialogContext);
+              if (Navigator.canPop(dialogContext)) {
+                Navigator.pop(dialogContext);
+              }
 
               if (isPermanentlyBlocked) {
                 await openAppSettings();
@@ -70,10 +99,10 @@ class UserOtpScreen extends StatelessWidget {
             },
             child: Text(
               !isGpsEnabled
-                  ? 'ঠিক আছে'
+                  ? l10n.okButton
                   : isPermanentlyBlocked
-                  ? 'সেটিংস ওপেন করুন'
-                  : 'আবার চেষ্টা করুন',
+                  ? l10n.openSettingsButton
+                  : l10n.tryAgainButton,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
@@ -81,38 +110,35 @@ class UserOtpScreen extends StatelessWidget {
       ),
     );
 
-    return false; // পারমিশন সাকসেসফুল না হলে false
+    return false;
   }
 
   // 🚀 ১. আইডি সাবমিট করে ওটিপি পাঠানোর ফাংশন
   void _sendOtp(BuildContext context) async {
     final authProvider = context.read<AuthProvider>();
+    final l10n = AppLocalizations.of(context)!;
     final idText = _idController.text.trim();
 
     if (idText.isEmpty) {
-      _showSnackBar(context, "অনুগ্রহ করে আপনার আইডি প্রদান করুন");
+      _showSnackBar(context, l10n.provideEmployeeIdError);
       return;
     }
 
     bool isPermissionOk = await _hasLocationAndGpsPermission(context);
     if (!isPermissionOk) {
-      return; // পারমিশন না দিলে ওটিপি API কল হবে না
+      return;
     }
 
     try {
       final msg = await authProvider.sendOtp(idText);
       if (msg['success'] == true && context.mounted) {
-        _showSnackBar(
-          context,
-          "আপনার রেজিস্টার্ড নাম্বারে ওটিপি পাঠানো হয়েছে",
-          isError: false,
-        );
-      } else {
+        _showSnackBar(context, l10n.otpSentSuccess, isError: false);
+      } else if (context.mounted) {
         _showSnackBar(context, msg['message']);
       }
     } catch (e) {
       if (context.mounted) {
-        _showSnackBar(context, "ওটিপি পাঠাতে সমস্যা হয়েছে: $e");
+        _showSnackBar(context, l10n.otpSendError(e.toString()));
       }
     }
   }
@@ -120,10 +146,12 @@ class UserOtpScreen extends StatelessWidget {
   // 🔐 ২. ওটিপি ভেরিফাই করে লগইন সম্পন্ন করার ফাংশন
   void _verifyOtpAndLogin(BuildContext context) async {
     final authProvider = context.read<AuthProvider>();
+    final l10n = AppLocalizations.of(context)!;
     final otpText = _otpController.text.trim();
     final idText = authProvider.currentEmployeeId ?? _idController.text.trim();
+
     if (otpText.length < 4) {
-      _showSnackBar(context, "অনুগ্রহ করে সঠিক ওটিপি কোডটি দিন");
+      _showSnackBar(context, l10n.enterValidOtpError);
       return;
     }
 
@@ -138,7 +166,7 @@ class UserOtpScreen extends StatelessWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        _showSnackBar(context, "ভেরিফিকেশন ব্যর্থ হয়েছে: $e");
+        _showSnackBar(context, l10n.verificationFailedError(e.toString()));
       }
     }
   }
@@ -160,10 +188,9 @@ class UserOtpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration.zero, () => _hasLocationAndGpsPermission(context));
-
     final theme = Theme.of(context);
     final authProvider = context.watch<AuthProvider>();
+    final l10n = AppLocalizations.of(context)!;
     final isOtpSent = authProvider.isOtpSent;
     final isLoading = authProvider.isLoading;
 
@@ -198,7 +225,7 @@ class UserOtpScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 Text(
-                  "কর্মচারী লগইন",
+                  l10n.employeeLoginTitle,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -207,9 +234,7 @@ class UserOtpScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  isOtpSent
-                      ? "আপনার মোবাইলে প্রাপ্ত ওটিপি কোডটি নিচে প্রদান করুন"
-                      : "আপনার ইউনিক কর্মচারী আইডি দিয়ে লগইন করুন",
+                  isOtpSent ? l10n.enterOtpSubtitle : l10n.enterIdSubtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                 ),
@@ -218,7 +243,7 @@ class UserOtpScreen extends StatelessWidget {
                 // 🆔 আইডি ইনপুট ফিল্ড
                 _buildTextField(
                   controller: _idController,
-                  hintText: "কর্মচারীর  আইডি (যেমন: 001100)",
+                  hintText: l10n.employeeIdHint,
                   icon: Icons.badge_outlined,
                   enabled: !isOtpSent && !isLoading,
                   keyboardType: TextInputType.text,
@@ -230,7 +255,7 @@ class UserOtpScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 16.0),
                     child: _buildTextField(
                       controller: _otpController,
-                      hintText: "৪ বা ৬ ডিজিটের ওটিপি কোড",
+                      hintText: l10n.otpCodeHint,
                       icon: Icons.lock_open_rounded,
                       enabled: !isLoading,
                       keyboardType: TextInputType.number,
@@ -268,7 +293,9 @@ class UserOtpScreen extends StatelessWidget {
                             ),
                           )
                         : Text(
-                            isOtpSent ? "ভেরিফাই ও লগইন" : "ওটিপি পাঠান",
+                            isOtpSent
+                                ? l10n.verifyAndLoginButton
+                                : l10n.sendOtpButton,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -287,7 +314,7 @@ class UserOtpScreen extends StatelessWidget {
                             _otpController.clear();
                           },
                     child: Text(
-                      "আইডি ভুল হয়েছে? পরিবর্তন করুন",
+                      l10n.changeIdButton,
                       style: TextStyle(
                         color: theme.colorScheme.secondary.withOpacity(0.8),
                         fontSize: 13,
