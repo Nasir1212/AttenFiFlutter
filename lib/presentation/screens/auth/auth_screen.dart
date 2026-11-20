@@ -55,8 +55,26 @@ class AuthScreen extends StatelessWidget {
                   isPassword: true,
                 ),
 
-                const SizedBox(height: 40),
+                //const SizedBox(height: 40),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/forgot-password');
+                    },
+                    child: const Text(
+                      'পাসওয়ার্ড ভুলে গেছেন?',
+                      style: TextStyle(
+                        color: Colors.redAccent,
+                        fontSize: 14,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.blueAccent,
+                      ),
+                    ),
+                  ),
+                ),
 
+                const SizedBox(height: 24),
                 // লগইন বাটন
                 SizedBox(
                   width: double.infinity,

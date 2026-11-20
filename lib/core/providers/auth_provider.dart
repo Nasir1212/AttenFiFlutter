@@ -27,6 +27,9 @@ class AuthProvider extends ChangeNotifier {
   bool _isOtpSent = false;
   bool get isOtpSent => _isOtpSent;
 
+  String? _savedManagerToken;
+  get managerToken => null;
+
   void setSelectedRange(String? value) {
     _selectedRange = value;
     notifyListeners();
@@ -213,6 +216,40 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       rethrow; // এররটি স্ক্রিনে ক্যাচ করার জন্য রেথ্রো করা হলো
     }
+  }
+
+  // 🔄 ম্যানেজার → ইউজার মোডে প্রবেশ
+  // session = switch-to-user বা user-profile API-র সাড়া
+  Future<void> enterUserMode(Map<String, dynamic> session) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // ম্যানেজারের আসল টোকেন জমা রাখা (শুধু অ্যাডমিন মোড থেকে ঢুকলে)
+    if (_currentRole == 'admin' && _token != null) {
+      _savedManagerToken = _token;
+      await prefs.setString('manager_token', _savedManagerToken!);
+    }
+
+    final employee = EmployeeModel.fromJson(
+      Map<String, dynamic>.from(session['employee']),
+    );
+    final List<dynamic> bssidList = session['allowed_bssids'] ?? [];
+
+    await prefs.setStringList('allowed_bssids', List<String>.from(bssidList));
+
+    final userProfile = {
+      ...employee.toMap(),
+      'id': employee.id,
+      'employee_id': employee.employeeId,
+      'image_url': employee.imageUrl,
+    };
+    await prefs.setString('user_profile', jsonEncode(userProfile));
+
+    _token = session['token'];
+    _currentRole = 'user';
+    await prefs.setString('auth_token', _token!);
+    await prefs.setString('user_role', 'user');
+
+    notifyListeners();
   }
 
   Future<bool> verifyOtpAndLogin(String employeeId, String otpCode) async {

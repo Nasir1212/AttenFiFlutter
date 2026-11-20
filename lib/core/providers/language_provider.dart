@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageProvider extends ChangeNotifier {
-  Locale _currentLocale = const Locale('bn'); // ডিফল্ট ভাষা বাংলা
+  Locale _currentLocale = const Locale('en'); // ডিফল্ট ভাষা বাংলা
   static const String _languageKey = 'selected_language';
 
   Locale get currentLocale => _currentLocale;

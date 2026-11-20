@@ -33,7 +33,11 @@ import 'core/providers/employee_provider.dart';
 import 'l10n/app_localizations.dart';
 import 'presentation/screens/User/dashboard/user_dashboard.dart';
 import 'presentation/screens/auth/auth_screen.dart';
+import 'presentation/screens/auth/change_password_screen.dart';
+import 'presentation/screens/auth/company_profile_screen.dart';
+import 'presentation/screens/auth/forgot_password_screen.dart';
 import 'presentation/screens/auth/splash_screen.dart';
+import 'presentation/screens/notification/notification_screen.dart';
 import 'presentation/screens/settings/settingsholly.dart';
 
 void main() {
@@ -123,6 +127,10 @@ class AttenFiAdmin extends StatelessWidget {
         '/attendance_history': (context) => AttendanceHistoryScreen(),
         '/user-dashboard': (context) => UserDashboard(),
         '/admin-otp': (context) => AdminOtpDashboard(),
+        '/change-password': (context) => ChangePasswordScreen(),
+        '/company-profile': (context) => const CompanyProfileScreen(),
+        '/forgot-password': (context) => ForgotPasswordScreen(),
+        '/notifications': (context) => const NotificationScreen(),
       },
     );
   }

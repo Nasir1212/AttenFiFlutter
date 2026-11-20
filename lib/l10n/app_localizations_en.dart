@@ -1088,5 +1088,129 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cab_contact_for_ads => 'Contact for Advertisements';
 
   @override
-  String get cab_ad_email => 'adds@AttenFi.live';
+  String get cab_ad_email => 'ads@AttenFi.live';
+
+  @override
+  String get seHTitle => 'Settings';
+
+  @override
+  String get seHInfoText => 'Configure from here.';
+
+  @override
+  String get seHWeeklyHolidaySection => 'Select weekly holidays';
+
+  @override
+  String get seHWeekdayFriday => 'Friday';
+
+  @override
+  String get seHWeekdaySaturday => 'Saturday';
+
+  @override
+  String get seHWeekdaySunday => 'Sunday';
+
+  @override
+  String get seHWeekdayMonday => 'Monday';
+
+  @override
+  String get seHWeekdayTuesday => 'Tuesday';
+
+  @override
+  String get seHWeekdayWednesday => 'Wednesday';
+
+  @override
+  String get seHWeekdayThursday => 'Thursday';
+
+  @override
+  String get seHOfficeScheduleSection => 'Office schedule & rules';
+
+  @override
+  String get seHOfficeInTimeLabel => 'Office start (In Time)';
+
+  @override
+  String get seHOfficeOutTimeLabel => 'Office end (Out Time)';
+
+  @override
+  String get seHGracePeriodLabel => 'Grace period (minutes)';
+
+  @override
+  String get seHAttendanceSecuritySection => 'Attendance security policy';
+
+  @override
+  String get seHAttendanceAnywhereTitle => 'From anywhere (Remote/Open)';
+
+  @override
+  String get seHAttendanceAnywhereSubtitle =>
+      'Employees can mark attendance from the field or from any location.';
+
+  @override
+  String get seHAttendanceGeofencingTitle =>
+      'Office location tracking (Geofencing)';
+
+  @override
+  String get seHAttendanceGeofencingSubtitle =>
+      'Employees can mark attendance from the mobile app only when they are present at the office.';
+
+  @override
+  String get seHGpsRadiusLabel => 'Allowed radius (in meters)';
+
+  @override
+  String get seHSaveButton => 'Save settings';
+
+  @override
+  String get seHSavedSuccess => 'Settings saved to the backend successfully!';
+
+  @override
+  String get managerMyAttendance => 'My Attendance';
+
+  @override
+  String get managerBackToManagerMode => 'Back to Manager Mode';
+
+  @override
+  String get managerPopupTitle => 'Mark your own attendance';
+
+  @override
+  String get managerPopupMessage =>
+      'To mark your own attendance, you need to fill in your employee information once. After that, you can enter User Mode directly.';
+
+  @override
+  String get managerNext => 'Next';
+
+  @override
+  String get managerCancel => 'Cancel';
+
+  @override
+  String get managerFormTitle => 'Your Information';
+
+  @override
+  String get managerFormPhoto => 'Add photo (optional)';
+
+  @override
+  String get managerFormName => 'Name';
+
+  @override
+  String get managerFormMobile => 'Mobile';
+
+  @override
+  String get managerFormFather => 'Father\'s name';
+
+  @override
+  String get managerFormMother => 'Mother\'s name';
+
+  @override
+  String get managerFormNid => 'NID number';
+
+  @override
+  String get managerFormDob => 'Date of birth';
+
+  @override
+  String get managerFormAddress => 'Address';
+
+  @override
+  String get managerFormSubmit => 'Save & Continue';
+
+  @override
+  String get managerFormRequired => 'This field is required';
+
+  @override
+  String get managerFormError => 'Something went wrong. Please try again.';
 }

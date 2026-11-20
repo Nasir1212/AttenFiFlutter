@@ -2141,8 +2141,248 @@ abstract class AppLocalizations {
   /// No description provided for @cab_ad_email.
   ///
   /// In bn, this message translates to:
-  /// **'adds@AttenFi.live'**
+  /// **'ads@AttenFi.live'**
   String get cab_ad_email;
+
+  /// No description provided for @seHTitle.
+  ///
+  /// In bn, this message translates to:
+  /// **'সেটিংস'**
+  String get seHTitle;
+
+  /// No description provided for @seHInfoText.
+  ///
+  /// In bn, this message translates to:
+  /// **'এখান থেকে কনফিগার করুন।'**
+  String get seHInfoText;
+
+  /// No description provided for @seHWeeklyHolidaySection.
+  ///
+  /// In bn, this message translates to:
+  /// **'সাপ্তাহিক ছুটি সিলেক্ট করুন'**
+  String get seHWeeklyHolidaySection;
+
+  /// No description provided for @seHWeekdayFriday.
+  ///
+  /// In bn, this message translates to:
+  /// **'শুক্রবার'**
+  String get seHWeekdayFriday;
+
+  /// No description provided for @seHWeekdaySaturday.
+  ///
+  /// In bn, this message translates to:
+  /// **'শনিবার'**
+  String get seHWeekdaySaturday;
+
+  /// No description provided for @seHWeekdaySunday.
+  ///
+  /// In bn, this message translates to:
+  /// **'রবিবার'**
+  String get seHWeekdaySunday;
+
+  /// No description provided for @seHWeekdayMonday.
+  ///
+  /// In bn, this message translates to:
+  /// **'সোমবার'**
+  String get seHWeekdayMonday;
+
+  /// No description provided for @seHWeekdayTuesday.
+  ///
+  /// In bn, this message translates to:
+  /// **'মঙ্গলবার'**
+  String get seHWeekdayTuesday;
+
+  /// No description provided for @seHWeekdayWednesday.
+  ///
+  /// In bn, this message translates to:
+  /// **'বুধবার'**
+  String get seHWeekdayWednesday;
+
+  /// No description provided for @seHWeekdayThursday.
+  ///
+  /// In bn, this message translates to:
+  /// **'বৃহস্পতিবার'**
+  String get seHWeekdayThursday;
+
+  /// No description provided for @seHOfficeScheduleSection.
+  ///
+  /// In bn, this message translates to:
+  /// **'অফিসের সময়সূচী ও নিয়ম'**
+  String get seHOfficeScheduleSection;
+
+  /// No description provided for @seHOfficeInTimeLabel.
+  ///
+  /// In bn, this message translates to:
+  /// **'অফিস শুরু (In Time)'**
+  String get seHOfficeInTimeLabel;
+
+  /// No description provided for @seHOfficeOutTimeLabel.
+  ///
+  /// In bn, this message translates to:
+  /// **'অফিস শেষ (Out Time)'**
+  String get seHOfficeOutTimeLabel;
+
+  /// No description provided for @seHGracePeriodLabel.
+  ///
+  /// In bn, this message translates to:
+  /// **'গ্রেস পিরিয়ড (মিনিট)'**
+  String get seHGracePeriodLabel;
+
+  /// No description provided for @seHAttendanceSecuritySection.
+  ///
+  /// In bn, this message translates to:
+  /// **'হাজিরা সিকিউরিটি পলিসি'**
+  String get seHAttendanceSecuritySection;
+
+  /// No description provided for @seHAttendanceAnywhereTitle.
+  ///
+  /// In bn, this message translates to:
+  /// **'যেকোনো স্থান থেকে (Remote/Open)'**
+  String get seHAttendanceAnywhereTitle;
+
+  /// No description provided for @seHAttendanceAnywhereSubtitle.
+  ///
+  /// In bn, this message translates to:
+  /// **'কর্মীরা মাঠ পর্যায়ে বা যেকোনো জায়গা থেকে হাজিরা দিতে পারবে।'**
+  String get seHAttendanceAnywhereSubtitle;
+
+  /// No description provided for @seHAttendanceGeofencingTitle.
+  ///
+  /// In bn, this message translates to:
+  /// **'অফিস লোকেশন ট্র্যাকিং (Geofencing)'**
+  String get seHAttendanceGeofencingTitle;
+
+  /// No description provided for @seHAttendanceGeofencingSubtitle.
+  ///
+  /// In bn, this message translates to:
+  /// **'কর্মী অফিসে উপস্থিত থাকলেই কেবল মোবাইল অ্যাপ থেকে হাজিরা দিতে পারবে।'**
+  String get seHAttendanceGeofencingSubtitle;
+
+  /// No description provided for @seHGpsRadiusLabel.
+  ///
+  /// In bn, this message translates to:
+  /// **'অনুমোদিত ব্যাসার্ধ বা রেডিয়াস (মিটারে)'**
+  String get seHGpsRadiusLabel;
+
+  /// No description provided for @seHSaveButton.
+  ///
+  /// In bn, this message translates to:
+  /// **'সেটিংস সংরক্ষণ করুন'**
+  String get seHSaveButton;
+
+  /// No description provided for @seHSavedSuccess.
+  ///
+  /// In bn, this message translates to:
+  /// **'সেটিংস সফলভাবে ব্যাকএন্ডে সেভ হয়েছে!'**
+  String get seHSavedSuccess;
+
+  /// No description provided for @managerMyAttendance.
+  ///
+  /// In bn, this message translates to:
+  /// **'আমার হাজিরা'**
+  String get managerMyAttendance;
+
+  /// No description provided for @managerBackToManagerMode.
+  ///
+  /// In bn, this message translates to:
+  /// **'ম্যানেজার মোডে ফিরুন'**
+  String get managerBackToManagerMode;
+
+  /// No description provided for @managerPopupTitle.
+  ///
+  /// In bn, this message translates to:
+  /// **'নিজের হাজিরা দিন'**
+  String get managerPopupTitle;
+
+  /// No description provided for @managerPopupMessage.
+  ///
+  /// In bn, this message translates to:
+  /// **'নিজের হাজিরা দিতে আপনাকে একবার কর্মীর তথ্য পূরণ করতে হবে। এরপর থেকে সরাসরি ইউজার মোডে ঢুকতে পারবেন।'**
+  String get managerPopupMessage;
+
+  /// No description provided for @managerNext.
+  ///
+  /// In bn, this message translates to:
+  /// **'পরবর্তী'**
+  String get managerNext;
+
+  /// No description provided for @managerCancel.
+  ///
+  /// In bn, this message translates to:
+  /// **'বাতিল'**
+  String get managerCancel;
+
+  /// No description provided for @managerFormTitle.
+  ///
+  /// In bn, this message translates to:
+  /// **'আপনার তথ্য'**
+  String get managerFormTitle;
+
+  /// No description provided for @managerFormPhoto.
+  ///
+  /// In bn, this message translates to:
+  /// **'ছবি যোগ করুন (ঐচ্ছিক)'**
+  String get managerFormPhoto;
+
+  /// No description provided for @managerFormName.
+  ///
+  /// In bn, this message translates to:
+  /// **'নাম'**
+  String get managerFormName;
+
+  /// No description provided for @managerFormMobile.
+  ///
+  /// In bn, this message translates to:
+  /// **'মোবাইল'**
+  String get managerFormMobile;
+
+  /// No description provided for @managerFormFather.
+  ///
+  /// In bn, this message translates to:
+  /// **'পিতার নাম'**
+  String get managerFormFather;
+
+  /// No description provided for @managerFormMother.
+  ///
+  /// In bn, this message translates to:
+  /// **'মাতার নাম'**
+  String get managerFormMother;
+
+  /// No description provided for @managerFormNid.
+  ///
+  /// In bn, this message translates to:
+  /// **'এনআইডি নম্বর'**
+  String get managerFormNid;
+
+  /// No description provided for @managerFormDob.
+  ///
+  /// In bn, this message translates to:
+  /// **'জন্ম তারিখ'**
+  String get managerFormDob;
+
+  /// No description provided for @managerFormAddress.
+  ///
+  /// In bn, this message translates to:
+  /// **'ঠিকানা'**
+  String get managerFormAddress;
+
+  /// No description provided for @managerFormSubmit.
+  ///
+  /// In bn, this message translates to:
+  /// **'সংরক্ষণ করে এগিয়ে যান'**
+  String get managerFormSubmit;
+
+  /// No description provided for @managerFormRequired.
+  ///
+  /// In bn, this message translates to:
+  /// **'এই ঘরটি পূরণ করা আবশ্যক'**
+  String get managerFormRequired;
+
+  /// No description provided for @managerFormError.
+  ///
+  /// In bn, this message translates to:
+  /// **'কিছু ভুল হয়েছে। আবার চেষ্টা করুন।'**
+  String get managerFormError;
 }
 
 class _AppLocalizationsDelegate

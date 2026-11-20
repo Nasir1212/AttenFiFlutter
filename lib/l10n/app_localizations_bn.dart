@@ -1088,5 +1088,129 @@ class AppLocalizationsBn extends AppLocalizations {
   String get cab_contact_for_ads => 'বিজ্ঞাপনের জন্য যোগাযোগ করুন';
 
   @override
-  String get cab_ad_email => 'adds@AttenFi.live';
+  String get cab_ad_email => 'ads@AttenFi.live';
+
+  @override
+  String get seHTitle => 'সেটিংস';
+
+  @override
+  String get seHInfoText => 'এখান থেকে কনফিগার করুন।';
+
+  @override
+  String get seHWeeklyHolidaySection => 'সাপ্তাহিক ছুটি সিলেক্ট করুন';
+
+  @override
+  String get seHWeekdayFriday => 'শুক্রবার';
+
+  @override
+  String get seHWeekdaySaturday => 'শনিবার';
+
+  @override
+  String get seHWeekdaySunday => 'রবিবার';
+
+  @override
+  String get seHWeekdayMonday => 'সোমবার';
+
+  @override
+  String get seHWeekdayTuesday => 'মঙ্গলবার';
+
+  @override
+  String get seHWeekdayWednesday => 'বুধবার';
+
+  @override
+  String get seHWeekdayThursday => 'বৃহস্পতিবার';
+
+  @override
+  String get seHOfficeScheduleSection => 'অফিসের সময়সূচী ও নিয়ম';
+
+  @override
+  String get seHOfficeInTimeLabel => 'অফিস শুরু (In Time)';
+
+  @override
+  String get seHOfficeOutTimeLabel => 'অফিস শেষ (Out Time)';
+
+  @override
+  String get seHGracePeriodLabel => 'গ্রেস পিরিয়ড (মিনিট)';
+
+  @override
+  String get seHAttendanceSecuritySection => 'হাজিরা সিকিউরিটি পলিসি';
+
+  @override
+  String get seHAttendanceAnywhereTitle => 'যেকোনো স্থান থেকে (Remote/Open)';
+
+  @override
+  String get seHAttendanceAnywhereSubtitle =>
+      'কর্মীরা মাঠ পর্যায়ে বা যেকোনো জায়গা থেকে হাজিরা দিতে পারবে।';
+
+  @override
+  String get seHAttendanceGeofencingTitle =>
+      'অফিস লোকেশন ট্র্যাকিং (Geofencing)';
+
+  @override
+  String get seHAttendanceGeofencingSubtitle =>
+      'কর্মী অফিসে উপস্থিত থাকলেই কেবল মোবাইল অ্যাপ থেকে হাজিরা দিতে পারবে।';
+
+  @override
+  String get seHGpsRadiusLabel => 'অনুমোদিত ব্যাসার্ধ বা রেডিয়াস (মিটারে)';
+
+  @override
+  String get seHSaveButton => 'সেটিংস সংরক্ষণ করুন';
+
+  @override
+  String get seHSavedSuccess => 'সেটিংস সফলভাবে ব্যাকএন্ডে সেভ হয়েছে!';
+
+  @override
+  String get managerMyAttendance => 'আমার হাজিরা';
+
+  @override
+  String get managerBackToManagerMode => 'ম্যানেজার মোডে ফিরুন';
+
+  @override
+  String get managerPopupTitle => 'নিজের হাজিরা দিন';
+
+  @override
+  String get managerPopupMessage =>
+      'নিজের হাজিরা দিতে আপনাকে একবার কর্মীর তথ্য পূরণ করতে হবে। এরপর থেকে সরাসরি ইউজার মোডে ঢুকতে পারবেন।';
+
+  @override
+  String get managerNext => 'পরবর্তী';
+
+  @override
+  String get managerCancel => 'বাতিল';
+
+  @override
+  String get managerFormTitle => 'আপনার তথ্য';
+
+  @override
+  String get managerFormPhoto => 'ছবি যোগ করুন (ঐচ্ছিক)';
+
+  @override
+  String get managerFormName => 'নাম';
+
+  @override
+  String get managerFormMobile => 'মোবাইল';
+
+  @override
+  String get managerFormFather => 'পিতার নাম';
+
+  @override
+  String get managerFormMother => 'মাতার নাম';
+
+  @override
+  String get managerFormNid => 'এনআইডি নম্বর';
+
+  @override
+  String get managerFormDob => 'জন্ম তারিখ';
+
+  @override
+  String get managerFormAddress => 'ঠিকানা';
+
+  @override
+  String get managerFormSubmit => 'সংরক্ষণ করে এগিয়ে যান';
+
+  @override
+  String get managerFormRequired => 'এই ঘরটি পূরণ করা আবশ্যক';
+
+  @override
+  String get managerFormError => 'কিছু ভুল হয়েছে। আবার চেষ্টা করুন।';
 }

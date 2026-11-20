@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/settings_provider.dart';
+import '../../../l10n/app_localizations.dart'; // আপনার l10n.yaml অনুযায়ী পাথ ঠিক করুন
 
 class Settingsholly extends StatelessWidget {
   const Settingsholly({super.key});
 
   // 📅 ডার্ট ক্যালেন্ডার বার (৫ = শুক্রবার, ৬ = শনিবার)
-  final Map<String, String> _weekdays = const {
-    "5": "শুক্রবার",
-    "6": "শনিবার",
-    "7": "রবিবার",
-    "1": "সোমবার",
-    "2": "মঙ্গলবার",
-    "3": "বুধবার",
-    "4": "বৃহস্পতিবার",
+  Map<String, String> _weekdays(AppLocalizations l10n) => {
+    "5": l10n.seHWeekdayFriday,
+    "6": l10n.seHWeekdaySaturday,
+    "7": l10n.seHWeekdaySunday,
+    "1": l10n.seHWeekdayMonday,
+    "2": l10n.seHWeekdayTuesday,
+    "3": l10n.seHWeekdayWednesday,
+    "4": l10n.seHWeekdayThursday,
   };
 
   // টাইম পিকার দেখানোর ফাংশন
@@ -47,6 +48,7 @@ class Settingsholly extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final primaryColor = theme.primaryColor;
     final onPrimaryColor = theme.colorScheme.onPrimary;
@@ -57,7 +59,7 @@ class Settingsholly extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          ' সেটিংস',
+          l10n.seHTitle,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -84,10 +86,13 @@ class Settingsholly extends StatelessWidget {
                 children: [
                   Icon(Icons.info_outline_rounded, color: primaryColor),
                   const SizedBox(width: 10),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      ' এখান থেকে কনফিগার করুন।',
-                      style: TextStyle(fontSize: 13, color: Colors.black87),
+                      l10n.seHInfoText,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
                 ],
@@ -98,14 +103,14 @@ class Settingsholly extends StatelessWidget {
             // 📅 সেকশন ১: সাপ্তাহিক ছুটি (FilterChips)
             _buildSectionTitle(
               Icons.calendar_month_rounded,
-              "সাপ্তাহিক ছুটি সিলেক্ট করুন",
+              l10n.seHWeeklyHolidaySection,
               primaryColor,
             ),
             const SizedBox(height: 10),
             Wrap(
               spacing: 8.0,
               runSpacing: 4.0,
-              children: _weekdays.entries.map((entry) {
+              children: _weekdays(l10n).entries.map((entry) {
                 final isSelected = settingsProvider.weekendDays.contains(
                   entry.key,
                 );
@@ -132,148 +137,7 @@ class Settingsholly extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // 🕒 সেকশন ২: অফিসের সময়সূচী
-            // _buildSectionTitle(
-            //   Icons.access_time_filled_rounded,
-            //   "অফিসের সময়সূচী ও নিয়ম",
-            //   primaryColor,
-            // ),
-            // const SizedBox(height: 12),
-            // Row(
-            //   children: [
-            //     // অফিস ইন-টাইম বক্স
-            //     Expanded(
-            //       child: InkWell(
-            //         onTap: () => _selectTime(context, settingsProvider, true),
-            //         child: Container(
-            //           padding: const EdgeInsets.all(12),
-            //           decoration: BoxDecoration(
-            //             border: Border.all(color: Colors.grey.shade300),
-            //             borderRadius: BorderRadius.circular(12),
-            //           ),
-            //           child: Column(
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             children: [
-            //               const Text(
-            //                 'অফিস শুরু (In Time)',
-            //                 style: TextStyle(fontSize: 12, color: Colors.grey),
-            //               ),
-            //               const SizedBox(height: 4),
-            //               Text(
-            //                 settingsProvider.inTime,
-            //                 style: const TextStyle(
-            //                   fontSize: 16,
-            //                   fontWeight: FontWeight.bold,
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     const SizedBox(width: 12),
-            //     // অফিস আউট-টাইম বক্স
-            //     Expanded(
-            //       child: InkWell(
-            //         onTap: () => _selectTime(context, settingsProvider, false),
-            //         child: Container(
-            //           padding: const EdgeInsets.all(12),
-            //           decoration: BoxDecoration(
-            //             border: Border.all(color: Colors.grey.shade300),
-            //             borderRadius: BorderRadius.circular(12),
-            //           ),
-            //           child: Column(
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             children: [
-            //               const Text(
-            //                 'অফিস শেষ (Out Time)',
-            //                 style: TextStyle(fontSize: 12, color: Colors.grey),
-            //               ),
-            //               const SizedBox(height: 4),
-            //               Text(
-            //                 settingsProvider.outTime,
-            //                 style: const TextStyle(
-            //                   fontSize: 16,
-            //                   fontWeight: FontWeight.bold,
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 12),
-
-            // // গ্রেস পিরিয়ড ফিল্ড
-            // TextFormField(
-            //   initialValue: settingsProvider.gracePeriod.toString(),
-            //   keyboardType: TextInputType.number,
-            //   onChanged: (val) =>
-            //       settingsProvider.gracePeriod = int.tryParse(val) ?? 0,
-            //   decoration: InputDecoration(
-            //     labelText: 'গ্রেস পিরিয়ড (মিনিট)',
-            //     border: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(12),
-            //     ),
-            //     prefixIcon: const Icon(Icons.timer_outlined),
-            //   ),
-            // ),
-            // const SizedBox(height: 24),
-
-            // // 📍 সেকশন ৩: হাজিরার সিকিউরিটি পলিসি
-            // _buildSectionTitle(
-            //   Icons.shield_rounded,
-            //   "হাজিরা সিকিউরিটি পলিসি",
-            //   primaryColor,
-            // ),
-            // const SizedBox(height: 12),
-
-            // _buildRadioCard(
-            //   value: "anywhere",
-            //   title: "যেকোনো স্থান থেকে (Remote/Open)",
-            //   subtitle:
-            //       "कर्मীরা মাঠ পর্যায়ে বা যেকোনো জায়গা থেকে হাজিরা দিতে পারবে।",
-            //   primaryColor: primaryColor,
-            //   currentGroupValue: settingsProvider.attendanceMode,
-            //   onChanged: (val) => settingsProvider.updateAttendanceMode(val!),
-            // ),
-            // const SizedBox(height: 10),
-
-            // _buildRadioCard(
-            //   value: "geofencing",
-            //   title: "অফিস লোকেশন ট্র্যাকিং (Geofencing)",
-            //   subtitle:
-            //       "কর্মী অফিসে উপস্থিত থাকলেই কেবল মোবাইল অ্যাপ থেকে হাজিরা দিতে পারবে।",
-            //   primaryColor: primaryColor,
-            //   currentGroupValue: settingsProvider.attendanceMode,
-            //   onChanged: (val) => settingsProvider.updateAttendanceMode(val!),
-            // ),
-
-            // // জিপিএস রেডিয়াস (ডাইনামিকালি শো/হাইড হবে প্রোভাইডারের ডাটার ওপর ভিত্তি করে)
-            // if (settingsProvider.attendanceMode == "geofencing") ...[
-            //   const SizedBox(height: 12),
-            //   Padding(
-            //     padding: const EdgeInsets.only(left: 8.0),
-            //     child: TextFormField(
-            //       initialValue: settingsProvider.gpsRadius.toString(),
-            //       keyboardType: TextInputType.number,
-            //       onChanged: (val) =>
-            //           settingsProvider.gpsRadius = int.tryParse(val) ?? 100,
-            //       decoration: InputDecoration(
-            //         labelText: 'অনুমোদিত ব্যাসার্ধ বা রেডিয়াস (মিটারে)',
-            //         border: OutlineInputBorder(
-            //           borderRadius: BorderRadius.circular(12),
-            //         ),
-            //         prefixIcon: const Icon(Icons.radar_rounded),
-            //       ),
-            //     ),
-            //   ),
-            // ],
-            // const SizedBox(height: 40),
-
-            // // 🚀 সেটিংস সংরক্ষণ বাটন
+            // 🚀 সেটিংস সংরক্ষণ বাটন
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -289,17 +153,20 @@ class Settingsholly extends StatelessWidget {
                   bool success = await settingsProvider.saveSettingsToApi();
                   if (success && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('সেটিংস সফলভাবে ব্যাকএন্ডে সেভ হয়েছে!'),
+                      SnackBar(
+                        content: Text(l10n.seHSavedSuccess),
                         backgroundColor: Colors.green,
                       ),
                     );
                   }
                 },
                 icon: const Icon(Icons.save_rounded),
-                label: const Text(
-                  'সেটিংস সংরক্ষণ করুন',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                label: Text(
+                  l10n.seHSaveButton,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -323,66 +190,6 @@ class Settingsholly extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildRadioCard({
-    required String value,
-    required String title,
-    required String subtitle,
-    required Color primaryColor,
-    required String currentGroupValue,
-    required ValueChanged<String?> onChanged,
-  }) {
-    final isSelected = currentGroupValue == value;
-    return InkWell(
-      onTap: () => onChanged(value),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: isSelected ? primaryColor : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
-          ),
-          borderRadius: BorderRadius.circular(12),
-          color: isSelected
-              ? primaryColor.withOpacity(0.02)
-              : Colors.transparent,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Radio<String>(
-              value: value,
-              groupValue: currentGroupValue,
-              activeColor: primaryColor,
-              onChanged: onChanged,
-            ),
-            const SizedBox(width: 4),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
